@@ -313,6 +313,7 @@ class GridController {
     const container = document.getElementById('gridsContainer');
     if (!container) return;
     
+    // 完全清空容器，确保没有残留内容
     container.innerHTML = '';
     
     // 检查是否有网格配置
@@ -335,6 +336,11 @@ class GridController {
     
     // 导入JSON5支持模块
     import('../editor/json5-support.js').then(({ createJSON5Editor }) => {
+      // 确保容器是空的，防止重复渲染
+      if (container.children.length > 0) {
+        container.innerHTML = '';
+      }
+      
       this.grids.forEach((grid, index) => {
         // 创建简化的卡片结构
         const card = document.createElement('div');
@@ -503,6 +509,8 @@ class GridController {
     }).catch(error => {
       console.error('Failed to load JSON5 support module:', error);
       // 如果加载失败，使用原始的渲染方式
+      // 确保容器是空的，避免重复渲染
+      container.innerHTML = '';
       this._renderGridsWithFallback(container);
     });
   }
