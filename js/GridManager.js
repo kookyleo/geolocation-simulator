@@ -91,12 +91,20 @@ class GridManager {
       // 遍历所有网格配置
       this.grids.forEach(grid => {
         if (grid.enabled) {
+          // 先设置合并配置，这样在显示网格时就能正确应用
+          if (grid.mergeAreas && Array.isArray(grid.mergeAreas)) {
+            this.hexagonGridLayer.mergeConfig = grid.mergeAreas;
+          } else {
+            this.hexagonGridLayer.mergeConfig = [];
+          }
+          
           // 更新网格参数
           this.hexagonGridLayer.setGridOptions({
             radius: grid.gridRadius,
             areaRadius: grid.areaRadius,
             center: [grid.latitude, grid.longitude]
           });
+          
           // 显示启用的网格
           this.hexagonGridLayer.showGrid();
         }
@@ -566,8 +574,20 @@ class GridManager {
           // 保存编辑
           try {
             const updatedGrid = JSON.parse(textarea.value);
+            const previousGrid = this.grids[index];
             this.grids[index] = updatedGrid;
+            
+            // 检查是否有 mergeAreas 变化
+            const mergeAreasChanged = JSON.stringify(previousGrid.mergeAreas) !== JSON.stringify(updatedGrid.mergeAreas);
+            
             this.saveGridsToLocalStorage();
+            
+            // 如果 mergeAreas 有变化，强制重新加载网格
+            if (mergeAreasChanged && this.hexagonGridLayer) {
+              this.hexagonGridLayer.hideGrid();
+              this.updateGridDisplay();
+            }
+            
             editBtn.classList.remove('editing');
             editBtn.textContent = 'edit';
             textarea.readOnly = true;

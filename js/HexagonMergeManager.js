@@ -60,7 +60,7 @@ class HexagonMergeManager {
       return { mergeInfo: {} };
     }
     
-    console.log(`预处理合并关系... 共 ${this.mergeConfig.length} 个相邻对`);
+    console.log(`预处理合并关系... 共 ${this.mergeConfig.length} 个合并组`);
     
     // 创建六边形ID到对象的映射，加快查找
     const hexagonMap = new Map();
@@ -76,54 +76,63 @@ class HexagonMergeManager {
     // 创建合并信息对象
     const mergeInfo = {};
     
-    // 处理每个相邻对
-    this.mergeConfig.forEach(pair => {
-      // 确保使用 p*n* 格式的 ID
-      const [id1Raw, id2Raw] = pair;
-      const id1 = this.convertLegacyId(id1Raw);
-      const id2 = this.convertLegacyId(id2Raw);
-      
-      console.log(`预处理相邻对: [${id1Raw}${id1Raw !== id1 ? ' -> ' + id1 : ''}, ${id2Raw}${id2Raw !== id2 ? ' -> ' + id2 : ''}]`);
-      
-      // 获取两个六边形
-      const hexagon1 = hexagonMap.get(id1);
-      const hexagon2 = hexagonMap.get(id2);
-      
-      if (!hexagon1 || !hexagon2) {
-        console.log(`无法找到六边形 ${!hexagon1 ? id1 : id2}，跳过该相邻对`);
-        return;
-      }
-      
-      // 获取六边形的顶点坐标
-      const vertices1 = hexagon1.polygon.getLatLngs()[0];
-      const vertices2 = hexagon2.polygon.getLatLngs()[0];
-      
-      // 获取六边形的圆心
-      const hexCenter1 = hexCenters.get(id1);
-      const hexCenter2 = hexCenters.get(id2);
-      
-      if (!hexCenter1 || !hexCenter2) {
-        console.log(`无法获取六边形 ${!hexCenter1 ? id1 : id2} 的圆心，跳过该相邻对`);
-        return;
-      }
-      
-      // 检测相邻边并记录信息
-      const edgeInfo = this._detectAdjacentEdgesPreprocess(
-        vertices1, 
-        vertices2, 
-        hexCenter1, 
-        hexCenter2, 
-        id1, 
-        id2
-      );
-      
-      if (edgeInfo) {
-        // 将边缘信息添加到合并信息中
-        if (!mergeInfo[id1]) mergeInfo[id1] = [];
-        if (!mergeInfo[id2]) mergeInfo[id2] = [];
-        
-        mergeInfo[id1].push({ edge: edgeInfo.edge1, neighborId: id2 });
-        mergeInfo[id2].push({ edge: edgeInfo.edge2, neighborId: id1 });
+    // 处理每个合并组
+    this.mergeConfig.forEach(group => {
+      // 处理组内所有可能的相邻关系
+      for (let i = 0; i < group.length; i++) {
+        for (let j = 0; j < group.length; j++) {
+          if (i === j) continue; // 跳过自身
+          
+          const id1Raw = group[i];
+          const id2Raw = group[j];
+          
+          // 确保使用 p*n* 格式的 ID
+          const id1 = this.convertLegacyId(id1Raw);
+          const id2 = this.convertLegacyId(id2Raw);
+          
+          console.log(`检查可能的相邻对: [${id1Raw}${id1Raw !== id1 ? ' -> ' + id1 : ''}, ${id2Raw}${id2Raw !== id2 ? ' -> ' + id2 : ''}]`);
+          
+          // 获取两个六边形
+          const hexagon1 = hexagonMap.get(id1);
+          const hexagon2 = hexagonMap.get(id2);
+          
+          if (!hexagon1 || !hexagon2) {
+            console.log(`无法找到六边形 ${!hexagon1 ? id1 : id2}，跳过该相邻对`);
+            continue;
+          }
+          
+          // 获取六边形的顶点坐标
+          const vertices1 = hexagon1.polygon.getLatLngs()[0];
+          const vertices2 = hexagon2.polygon.getLatLngs()[0];
+          
+          // 获取六边形的圆心
+          const hexCenter1 = hexCenters.get(id1);
+          const hexCenter2 = hexCenters.get(id2);
+          
+          if (!hexCenter1 || !hexCenter2) {
+            console.log(`无法获取六边形 ${!hexCenter1 ? id1 : id2} 的圆心，跳过该相邻对`);
+            continue;
+          }
+          
+          // 检测相邻边并记录信息
+          const edgeInfo = this._detectAdjacentEdgesPreprocess(
+            vertices1, 
+            vertices2, 
+            hexCenter1, 
+            hexCenter2, 
+            id1, 
+            id2
+          );
+          
+          if (edgeInfo) {
+            // 将边缘信息添加到合并信息中
+            if (!mergeInfo[id1]) mergeInfo[id1] = [];
+            if (!mergeInfo[id2]) mergeInfo[id2] = [];
+            
+            mergeInfo[id1].push({ edge: edgeInfo.edge1, neighborId: id2 });
+            mergeInfo[id2].push({ edge: edgeInfo.edge2, neighborId: id1 });
+          }
+        }
       }
     });
     
