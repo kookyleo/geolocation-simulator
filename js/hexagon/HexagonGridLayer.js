@@ -6,6 +6,16 @@ import HexagonMergeManager from './HexagonMergeManager.js';
 
 /**
  * HexagonGridLayer 类 - 负责在地图上创建和管理六边形网格
+ * 
+ * 作为六边形网格系统的核心控制器，该类负责：
+ * - 初始化和管理整个六边形网格系统
+ * - 协调其他组件（渲染器、视口管理器等）的工作
+ * - 处理地图事件（如缩放、平移）
+ * - 管理六边形的添加、删除和更新
+ * - 存储六边形数据和状态
+ * - 提供对外接口，供其他模块调用
+ * 
+ * 可以将其视为六边形网格系统的"总指挥"，负责整体协调和管理。
  */
 class HexagonGridLayer {
   constructor(map) {

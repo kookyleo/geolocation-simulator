@@ -23,7 +23,7 @@ class EditorController {
       await window.monacoHelpers.waitForMonaco();
       
       // 导入JSON5支持模块
-      const { createJSON5Editor } = await import('../js/json5-support.js');
+      const { createJSON5Editor } = await import('../editor/json5-support.js');
       
       // 创建JSON5编辑器
       const editor = createJSON5Editor(container, {

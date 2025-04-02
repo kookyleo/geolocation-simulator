@@ -1,7 +1,7 @@
 /**
  * MapController 类 - 负责地图初始化和地图相关操作
  */
-import HexagonGridLayer from './HexagonGridLayer.js';
+import HexagonGridLayer from '../hexagon/HexagonGridLayer.js';
 
 class MapController {
   constructor() {

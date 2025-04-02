@@ -1,7 +1,7 @@
 /**
- * GridManager 类 - 负责管理六边形网格配置
+ * GridController 类 - 负责管理六边形网格配置
  */
-class GridManager {
+class GridController {
   constructor(hexagonGridLayer) {
     this.hexagonGridLayer = hexagonGridLayer;
     this.grids = [];
@@ -318,7 +318,7 @@ class GridManager {
     container.innerHTML = '';
     
     // 导入JSON5支持模块
-    import('../js/json5-support.js').then(({ createJSON5Editor }) => {
+    import('../editor/json5-support.js').then(({ createJSON5Editor }) => {
       this.grids.forEach((grid, index) => {
         // 创建简化的卡片结构
         const card = document.createElement('div');
@@ -706,4 +706,4 @@ class GridManager {
   }
 }
 
-export default GridManager;
+export default GridController;

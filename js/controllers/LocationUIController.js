@@ -197,8 +197,8 @@ class LocationUIController {
       // 显示空状态
       container.innerHTML = `
         <div class="empty-state">
-          <p>您还没有保存任何位置</p>
-          <button id="addFirstLocation" class="save">添加第一个位置</button>
+          <p>You have no saved locations</p>
+          <button id="addFirstLocation" class="save">Add first location</button>
         </div>
       `;
 
