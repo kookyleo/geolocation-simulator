@@ -1,10 +1,6 @@
 {
   "dependencies": {
-    "braces": "^3.0.3",
-    "chokidar": "^4.0.3",
-    "micromatch": "^4.0.8",
-    "monaco-editor": "^0.40.0",
-    "readdirp": "^4.1.2"
+    "monaco-editor": "^0.40.0"
   },
   "name": "geolocation",
   "version": "1.0.0",
@@ -27,7 +23,7 @@
   "directories": {
     "lib": "lib"
   },
-  "description": "",
+  "description": "Used to simulate geolocation in the browser.",
   "devDependencies": {
     "cpy": "^11.1.0"
   }
