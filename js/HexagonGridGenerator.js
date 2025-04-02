@@ -20,7 +20,7 @@ class HexagonGridGenerator {
    * @returns {Array} 生成的六边形数组
    */
   generateHexagonGrid(centerLatLng, hexRadius, areaRadius) {
-    console.time('生成六边形网格');
+    console.time('Generating hexagon grid');
     
     // 存储生成的六边形
     const hexagons = [];
@@ -73,8 +73,8 @@ class HexagonGridGenerator {
       }
     }
     
-    console.timeEnd('生成六边形网格');
-    console.log(`生成了 ${hexagons.length} 个六边形`);
+    console.timeEnd('Generating hexagon grid');
+    console.log(`Generated ${hexagons.length} hexagons`);
     
     return { hexagons, hexagonCoords };
   }

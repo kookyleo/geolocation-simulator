@@ -13,12 +13,12 @@ class HexagonMergeManager {
    */
   setMergeConfig(adjacentPairs) {
     if (!adjacentPairs || adjacentPairs.length === 0) {
-      console.log('没有提供相邻对配置');
+      console.log('No adjacent pairs configuration provided');
       this.mergeConfig = [];
       return;
     }
     
-    console.log(`设置相邻对配置... 共 ${adjacentPairs.length} 个`);
+    console.log(`Setting merge configuration... Total: ${adjacentPairs.length}`);
     this.mergeConfig = [...adjacentPairs];
   }
   
@@ -50,17 +50,17 @@ class HexagonMergeManager {
     }
     
     // 如果不是上述两种格式，返回原始ID
-    console.log(`无法解析ID: ${id}`);
+    console.log(`Unable to parse ID: ${id}`);
     return id;
   }
   
   preprocessMergeRelations(hexagons) {
     if (!this.mergeConfig || this.mergeConfig.length === 0) {
-      console.log('没有合并配置，跳过预处理');
+      console.log('No merge configuration, skipping preprocessing');
       return { mergeInfo: {} };
     }
     
-    console.log(`预处理合并关系... 共 ${this.mergeConfig.length} 个合并组`);
+    console.log(`Preprocessing merge relations... Total groups: ${this.mergeConfig.length}`);
     
     // 创建六边形ID到对象的映射，加快查找
     const hexagonMap = new Map();
@@ -90,14 +90,14 @@ class HexagonMergeManager {
           const id1 = this.convertLegacyId(id1Raw);
           const id2 = this.convertLegacyId(id2Raw);
           
-          console.log(`检查可能的相邻对: [${id1Raw}${id1Raw !== id1 ? ' -> ' + id1 : ''}, ${id2Raw}${id2Raw !== id2 ? ' -> ' + id2 : ''}]`);
+          console.log(`Checking possible adjacent pair: [${id1Raw}${id1Raw !== id1 ? ' -> ' + id1 : ''}, ${id2Raw}${id2Raw !== id2 ? ' -> ' + id2 : ''}]`);
           
           // 获取两个六边形
           const hexagon1 = hexagonMap.get(id1);
           const hexagon2 = hexagonMap.get(id2);
           
           if (!hexagon1 || !hexagon2) {
-            console.log(`无法找到六边形 ${!hexagon1 ? id1 : id2}，跳过该相邻对`);
+            console.log(`Cannot find hexagon ${!hexagon1 ? id1 : id2}, skipping this pair`);
             continue;
           }
           
@@ -110,7 +110,7 @@ class HexagonMergeManager {
           const hexCenter2 = hexCenters.get(id2);
           
           if (!hexCenter1 || !hexCenter2) {
-            console.log(`无法获取六边形 ${!hexCenter1 ? id1 : id2} 的圆心，跳过该相邻对`);
+            console.log(`Cannot get center for hexagon ${!hexCenter1 ? id1 : id2}, skipping this pair`);
             continue;
           }
           
@@ -136,7 +136,7 @@ class HexagonMergeManager {
       }
     });
     
-    console.log(`预处理完成，共找到 ${Object.keys(mergeInfo).length} 个需要合并的六边形`);
+    console.log(`Preprocessing complete, found ${Object.keys(mergeInfo).length} hexagons to merge`);
     return { mergeInfo };
   }
   
@@ -147,28 +147,28 @@ class HexagonMergeManager {
    */
   applyMergeInfo(hexagon, mergeInfo) {
     if (!hexagon) {
-      console.error(`错误: 尝试应用合并信息到空六边形对象`);
+      console.error(`Error: Attempting to apply merge info to null hexagon object`);
       return;
     }
     
     if (!mergeInfo || !mergeInfo[hexagon.id]) {
-      console.log(`六边形 ${hexagon.id} 没有合并信息，跳过应用`);
+      console.log(`Hexagon ${hexagon.id} has no merge info, skipping`);
       return;
     }
     
-    console.log(`开始应用合并信息到六边形 ${hexagon.id}`);
+    console.log(`Starting to apply merge info to hexagon ${hexagon.id}`);
     const edgeInfoList = mergeInfo[hexagon.id];
-    console.log(`合并信息列表:`, JSON.stringify(edgeInfoList));
+    console.log(`Merge info list:`, JSON.stringify(edgeInfoList));
     
     // 检查合并信息是否有效
     if (!Array.isArray(edgeInfoList) || edgeInfoList.length === 0) {
-      console.log(`六边形 ${hexagon.id} 的合并信息列表为空或无效`);
+      console.log(`Hexagon ${hexagon.id} has empty or invalid merge info list`);
       return;
     }
     
     // 初始化边缘信息数组（如果不存在）
     if (!hexagon.edgeInfo) {
-      console.log(`初始化六边形 ${hexagon.id} 的边缘信息数组`);
+      console.log(`Initializing edge info array for hexagon ${hexagon.id}`);
       hexagon.edgeInfo = [];
       for (let i = 0; i < 6; i++) {
         hexagon.edgeInfo.push({ visible: true, neighborId: null });
@@ -176,30 +176,30 @@ class HexagonMergeManager {
     }
     
     // 输出应用前的边缘可见性状态
-    console.log(`应用前的边缘状态:`, hexagon.edgeInfo.map((info, idx) => 
-      `边${idx}: ${info.visible === true ? '可见' : '不可见'}${info.neighborId ? ', 相邻: ' + info.neighborId : ''}`
+    console.log(`Edge states before applying:`, hexagon.edgeInfo.map((info, idx) => 
+      `Edge${idx}: ${info.visible === true ? 'visible' : 'hidden'}${info.neighborId ? ', neighbor: ' + info.neighborId : ''}`
     ));
     
     // 标记需要隐藏的边
     edgeInfoList.forEach(info => {
       // 检查边缘索引是否有效
       if (info.edge < 0 || info.edge >= hexagon.edgeInfo.length) {
-        console.error(`错误: 六边形 ${hexagon.id} 的边缘索引 ${info.edge} 超出范围`);
+        console.error(`Error: Edge index ${info.edge} out of range for hexagon ${hexagon.id}`);
         return;
       }
       
-      console.log(`标记六边形 ${hexagon.id} 的边 ${info.edge} 为不可见，相邻为 ${info.neighborId}`);
+      console.log(`Marking edge ${info.edge} of hexagon ${hexagon.id} as hidden, neighbor: ${info.neighborId}`);
       hexagon.edgeInfo[info.edge].visible = false;  // 显式设置为false
       hexagon.edgeInfo[info.edge].neighborId = info.neighborId;
     });
     
     // 输出应用后的边缘可见性状态
-    console.log(`应用后的边缘状态:`, hexagon.edgeInfo.map((info, idx) => 
-      `边${idx}: ${info.visible === true ? '可见' : '不可见'}${info.neighborId ? ', 相邻: ' + info.neighborId : ''}`
+    console.log(`Edge states after applying:`, hexagon.edgeInfo.map((info, idx) => 
+      `Edge${idx}: ${info.visible === true ? 'visible' : 'hidden'}${info.neighborId ? ', neighbor: ' + info.neighborId : ''}`
     ));
     
     // 重新创建六边形，只显示可见的边
-    console.log(`重新创建六边形 ${hexagon.id} 仅显示可见边`);
+    console.log(`Recreating hexagon ${hexagon.id} to show only visible edges`);
     this.gridLayer.renderer.recreateHexagonWithVisibleEdges(hexagon);
   }
   
@@ -209,7 +209,7 @@ class HexagonMergeManager {
    */
   mergeAdjacentHexagons(adjacentPairs) {
     if (!this.gridLayer.gridLayer) {
-      console.log('网格图层不存在，无法合并六边形网格');
+      console.log('Merge adjacent hexagons stage: grid layer does not exist, cannot merge hexagons');
       return;
     }
     
@@ -217,15 +217,15 @@ class HexagonMergeManager {
     this.setMergeConfig(adjacentPairs);
     
     // 输出当前所有六边形的ID
-    console.log('当前六边形IDs:', this.gridLayer.hexagons.map(h => h.id));
+    console.log('Merge adjacent hexagons stage: current hexagon IDs:', this.gridLayer.hexagons.map(h => h.id));
     
     // 如果没有提供相邻对，直接返回
     if (!adjacentPairs || adjacentPairs.length === 0) {
-      console.log('没有提供相邻对，不进行合并');
+      console.log('Merge adjacent hexagons stage: no adjacent pairs provided, skipping');
       return;
     }
     
-    console.log(`处理预定义的相邻对... 共 ${adjacentPairs.length} 个`);
+    console.log(`Merge adjacent hexagons stage: processing pre-defined adjacent pairs... 共 ${adjacentPairs.length} 个`);
     
     // 创建六边形ID到对象的映射，加快查找
     const hexagonMap = new Map();
@@ -241,14 +241,14 @@ class HexagonMergeManager {
     // 只处理指定的相邻对
     adjacentPairs.forEach(pair => {
       const [id1, id2] = pair;
-      console.log(`处理相邻对: [${id1}, ${id2}]`);
+      console.log(`Merge adjacent hexagons stage: processing adjacent pair: [${id1}, ${id2}]`);
       
       // 获取两个六边形
       const hexagon1 = hexagonMap.get(id1);
       const hexagon2 = hexagonMap.get(id2);
       
       if (!hexagon1 || !hexagon2) {
-        console.log(`无法找到六边形 ${!hexagon1 ? id1 : id2}，跳过该相邻对`);
+        console.log(`Cannot find hexagon ${!hexagon1 ? id1 : id2}, skipping this pair`);
         return;
       }
       
@@ -261,7 +261,7 @@ class HexagonMergeManager {
       const hexCenter2 = hexCenters.get(id2);
       
       if (!hexCenter1 || !hexCenter2) {
-        console.log(`无法获取六边形 ${!hexCenter1 ? id1 : id2} 的圆心，跳过该相邻对`);
+        console.log(`Cannot get center for hexagon ${!hexCenter1 ? id1 : id2}, skipping this pair`);
         return;
       }
       
@@ -288,11 +288,11 @@ class HexagonMergeManager {
         mergeInfo[id1].push({ edge: edge1, neighborId: id2 });
         mergeInfo[id2].push({ edge: edge2, neighborId: id1 });
         
-        console.log(`预处理阶段标记六边形 ${id1} 的边 ${edge1} 和六边形 ${id2} 的边 ${edge2} 为不可见`);
+        console.log(`Preprocessing stage: marking edge ${edge1} of hexagon ${id1} and edge ${edge2} of hexagon ${id2} as hidden`);
       }
     });
     
-    console.log(`相邻六边形网格合并完成，处理了 ${this.gridLayer.allHexagons.length} 个六边形`);
+    console.log(`Adjacent hexagon grid merge completed, processed ${this.gridLayer.allHexagons.length} hexagons`);
   }
 
   /**
@@ -319,7 +319,7 @@ class HexagonMergeManager {
   _detectAdjacentEdgesPreprocess(vertices1, vertices2, hexCenter1, hexCenter2, hexId1, hexId2) {
     // 计算外接圆半径的 0.9 倍
     const searchRadius = this.gridLayer.radius * 0.9;
-    console.log(`相邻边检测 - 搜索半径: ${searchRadius} 米`);
+    console.log(`Preprocessing stage: adjacent edge detection - search radius: ${searchRadius} meters`);
     
     // 找出第一个六边形中与这条线最近的边
     let closestEdge1 = -1;
@@ -348,7 +348,7 @@ class HexagonMergeManager {
         // 计算垂直距离
         const perpDistance = Math.abs((dy * (edgeMidpoint.lng - hexCenter1.lng) - dx * (edgeMidpoint.lat - hexCenter1.lat)) / length);
         
-        console.log(`六边形 ${hexId1} 的边 ${i} 垂直距离: ${perpDistance.toFixed(2)} 米`);
+        console.log(`Preprocessing stage: hexagon ${hexId1} edge ${i} perpendicular distance: ${perpDistance.toFixed(2)} meters`);
         
         if (perpDistance < minDistance1) {
           minDistance1 = perpDistance;
@@ -384,7 +384,7 @@ class HexagonMergeManager {
         // 计算垂直距离 - 修正计算错误
         const perpDistance = Math.abs((dy * (neighborEdgeMidpoint.lng - hexCenter2.lng) - dx * (neighborEdgeMidpoint.lat - hexCenter2.lat)) / length);
         
-        console.log(`六边形 ${hexId2} 的边 ${j} 垂直距离: ${perpDistance.toFixed(2)} 米`);
+        console.log(`Preprocessing stage: hexagon ${hexId2} edge ${j} perpendicular distance: ${perpDistance.toFixed(2)} meters`);
         
         if (perpDistance < minDistance2) {
           minDistance2 = perpDistance;
@@ -400,13 +400,13 @@ class HexagonMergeManager {
       const j = closestEdge2;
       const neighborNextIndex = (j + 1) % vertices2.length;
       
-      console.log(`预处理发现相邻边! 六边形 ${hexId1} 的边 ${i}->${nextIndex} 与六边形 ${hexId2} 的边 ${j}->${neighborNextIndex} 相邻`);
-      console.log(`最小垂直距离: 六边形 ${hexId1} 的边 ${i} = ${minDistance1.toFixed(2)}, 六边形 ${hexId2} 的边 ${j} = ${minDistance2.toFixed(2)}`);
+      console.log(`Preprocessing stage: discovered adjacent edge! Hexagon ${hexId1} edge ${i}->${nextIndex} with hexagon ${hexId2} edge ${j}->${neighborNextIndex}`);
+      console.log(`Minimum perpendicular distances: Hexagon ${hexId1} edge ${i} = ${minDistance1.toFixed(2)}, Hexagon ${hexId2} edge ${j} = ${minDistance2.toFixed(2)}`);
       
       return { edge1: i, edge2: j };
     }
     
-    console.log(`未找到相邻边! 六边形 ${hexId1} 和 ${hexId2} 之间`);
+    console.log(`Preprocessing stage: no adjacent edge found between hexagons ${hexId1} and ${hexId2}`);
     return null;
   }
   
@@ -417,7 +417,7 @@ class HexagonMergeManager {
   _detectAdjacentEdges(hexagon, neighborHex, vertices, neighborVertices, hexCenter, neighborCenter, hexId, neighborId) {
     // 计算外接圆半径的 0.9 倍
     const searchRadius = this.gridLayer.radius * 0.9;
-    console.log(`搜索半径: ${searchRadius.toFixed(2)} 米`);
+    console.log(`Detection stage: search radius: ${searchRadius.toFixed(2)} meters`);
     
     // 找出第一个六边形中与这条线最近的边
     let closestEdge1 = -1;
@@ -518,13 +518,13 @@ class HexagonMergeManager {
   _markEdgesAsInvisible(hexagon, neighborHex, i, j, hexId, neighborId) {
     // 确保边缘信息存在
     if (!hexagon.edgeInfo || !neighborHex.edgeInfo) {
-      console.error(`错误: 边缘信息数组不存在！六边形 ${hexId} 或 ${neighborId}`);
+      console.error(`Mark edges as invisible stage: edge info arrays do not exist! Hexagon ${hexId} or ${neighborId}`);
       return;
     }
 
     // 确保索引有效
     if (i < 0 || i >= hexagon.edgeInfo.length || j < 0 || j >= neighborHex.edgeInfo.length) {
-      console.error(`错误: 边缘索引超出范围! i=${i}, j=${j}, 六边形 ${hexId} 边数=${hexagon.edgeInfo.length}, 六边形 ${neighborId} 边数=${neighborHex.edgeInfo.length}`);
+      console.error(`Mark edges as invisible stage: edge index out of range! i=${i}, j=${j}, Hexagon ${hexId} edge count=${hexagon.edgeInfo.length}, Hexagon ${neighborId} edge count=${neighborHex.edgeInfo.length}`);
       return;
     }
 

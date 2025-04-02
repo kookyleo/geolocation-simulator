@@ -66,7 +66,7 @@ class HexagonGridLayer {
     this.renderer = new HexagonRenderer(this.gridLayer, this.coordSystem, this);
     this.gridGenerator = new HexagonGridGenerator(this.coordSystem, this.renderer);
 
-    console.log('正在生成六边形网格...');
+    console.log('Generating hexagon grid...');
 
     // 生成六边形网格
     const result = this.gridGenerator.generateHexagonGrid(
@@ -80,7 +80,7 @@ class HexagonGridLayer {
     this.allHexagons = [...this.hexagons]; // 保存所有六边形的备份
     this.hexagonCoords = result.hexagonCoords;
     
-    console.log('在渲染前预处理六边形合并关系...');
+    console.log('Preprocessing hexagon merge relations before rendering...');
     
     // 预先初始化每个六边形的边信息
     this.allHexagons.forEach(hexagon => {
@@ -91,8 +91,8 @@ class HexagonGridLayer {
     
     // 如果有合并配置，先预处理合并关系
     if (this.mergeManager && this.mergeConfig && this.mergeConfig.length > 0) {
-      console.log('开始应用合并配置，共 ' + this.mergeConfig.length + ' 个相邻对');
-      console.log('合并配置内容：', JSON.stringify(this.mergeConfig));
+      console.log('Starting to apply merge configuration, total adjacent pairs: ' + this.mergeConfig.length);
+      console.log('Merge configuration content:', JSON.stringify(this.mergeConfig));
       
       // 设置合并配置
       this.mergeManager.setMergeConfig(this.mergeConfig);
@@ -100,25 +100,25 @@ class HexagonGridLayer {
       // 预处理合并关系
       const { mergeInfo } = this.mergeManager.preprocessMergeRelations(this.allHexagons);
       
-      console.log('生成的合并信息：', JSON.stringify(mergeInfo));
+      console.log('Generated merge info:', JSON.stringify(mergeInfo));
       
       // 检查合并信息是否为空
       if (Object.keys(mergeInfo).length === 0) {
-        console.log('警告：生成的合并信息为空，请检查相邻对配置');
+        console.log('Warning: Generated merge info is empty, please check adjacent pair configuration');
       } else {
         // 应用合并信息到每个六边形
         this.allHexagons.forEach(hexagon => {
           if (hexagon.polygon) {
             // 检查该六边形是否需要应用合并信息
             if (mergeInfo[hexagon.id]) {
-              console.log(`应用合并信息到六边形 ${hexagon.id}`);
+              console.log(`Applying merge info to hexagon ${hexagon.id}`);
               // 应用合并信息（applyMergeInfo 内部会调用 recreateHexagonWithVisibleEdges）
               this.mergeManager.applyMergeInfo(hexagon, mergeInfo);
             }
           }
         });
         
-        console.log('合并关系预处理完成，共处理了 ' + this.allHexagons.length + ' 个六边形');
+        console.log('Merge relation preprocessing complete, processed ' + this.allHexagons.length + ' hexagons');
       }
     }
     
@@ -203,7 +203,7 @@ class HexagonGridLayer {
   _updateVisibleHexagons() {
     if (!this.visible || !this.allHexagons.length) return;
 
-    console.time('更新可视六边形');
+    console.time('Update visible hexagons');
 
     // 获取当前地图视口范围
     const bounds = this.map.getBounds();
@@ -240,8 +240,8 @@ class HexagonGridLayer {
     // 更新当前可见的六边形数组
     this.hexagons = this.allHexagons.filter(hex => this.visibleHexagons.has(hex.id));
 
-    console.timeEnd('更新可视六边形');
-    console.log(`可视六边形: ${this.visibleHexagons.size}/${this.allHexagons.length}`);
+    console.timeEnd('Update visible hexagons');
+    console.log(`Visible hexagons: ${this.visibleHexagons.size}/${this.allHexagons.length}`);
   }
 
   /**
@@ -330,7 +330,7 @@ class HexagonGridLayer {
    * @param {Array} adjacentPairs - 相邻对数组，每对包含两个网格 ID
    */
   mergeAdjacentHexagons(adjacentPairs) {
-    console.log('设置合并配置，共 ' + (adjacentPairs ? adjacentPairs.length : 0) + ' 个相邻对');
+    console.log('Merge adjacent hexagons stage: setting merge configuration, total ' + (adjacentPairs ? adjacentPairs.length : 0) + ' pairs');
     
     // 保存合并配置
     this.mergeConfig = adjacentPairs || [];
@@ -341,7 +341,7 @@ class HexagonGridLayer {
       this.showGrid();
     } else {
       // 如果网格还没有显示，只保存配置，等到显示时再应用
-      console.log('网格尚未显示，已保存合并配置，将在显示时应用');
+      console.log('Merge adjacent hexagons stage: grid not displayed, configuration saved for later application');
     }
   }
 }
