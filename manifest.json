@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Geolocation Simulator",
   "version": "1.0",
-  "description": "在侧边面板中使用地图模拟地理位置。",
+  "description": "Used to simulate geolocation in the browser.",
   "permissions": [
     "sidePanel", 
     "geolocation",
@@ -21,7 +21,7 @@
     "default_path": "panel.html"
   },
   "action": {
-    "default_title": "打开地理位置模拟器"
+    "default_title": "Open Geolocation Simulator"
   },
   "web_accessible_resources": [
     {

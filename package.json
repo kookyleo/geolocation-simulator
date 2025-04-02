@@ -6,7 +6,16 @@
   "version": "1.0.0",
   "main": "background.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "make-dist": "mkdir dist",
+    "copy:single": "cpx \"{manifest.json,panel.html,background.js,styles.css}\" dist",
+    "copy:js": "cpx \"js/**/*\" dist/js",
+    "copy:lib": "cpx \"lib/**/*\" dist/lib",
+    "copy:images": "cpx \"images/**/*\" dist/images",
+    "copy:monaco": "cpx \"node_modules/monaco-editor/min/vs/**/*\" dist/node_modules/monaco-editor/min/vs",
+    "copy": "npm run clean && npm run make-dist && npm run copy:single && npm run copy:js && npm run copy:lib && npm run copy:images && npm run copy:monaco",
+    "zip": "cd dist && zip -r ../geolocation.zip .",
+    "package": "npm run copy && npm run zip"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +23,8 @@
   "directories": {
     "lib": "lib"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "cpx": "^1.5.0"
+  }
 }

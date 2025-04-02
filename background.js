@@ -13,17 +13,17 @@ const attachedTabs = new Map();
 chrome.storage.local.get(['mockGeolocation'], function(result) {
   if (result.mockGeolocation) {
     mockGeolocation = result.mockGeolocation;
-    console.log('从存储中加载了模拟位置:', mockGeolocation);
+    console.log('Loaded mock location from storage:', mockGeolocation);
   } else {
     // 如果没有存储的位置，初始化存储
     chrome.storage.local.set({ mockGeolocation }, function() {
-      console.log('已初始化存储中的模拟位置');
+      console.log('Initialized mock location in storage');
     });
   }
 });
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("Geolocation Simulator 已安装");
+  console.log("Geolocation Simulator installed");
 });
 
 // 监听扩展图标点击事件
@@ -39,18 +39,18 @@ chrome.action.onClicked.addListener(async (tab) => {
       enabled: true
     });
     
-    console.log("已打开地理位置模拟器侧边栏");
+    console.log("Opened geolocation simulator sidebar");
     
     // 为当前标签页附加调试器
     attachDebugger(tab.id);
   } catch (err) {
-    console.error('打开侧边栏失败:', err);
+    console.error('Failed to open sidebar:', err);
   }
 });
 
 // 接收来自 MapController 和其他组件的消息
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-  console.log('后台收到消息:', message);
+  console.log('Background received message:', message);
   
   if (message.action === 'updateGeolocation') {
     // 来自 MapController 的位置更新请求
@@ -61,10 +61,10 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     
     // 同时更新存储
     chrome.storage.local.set({ mockGeolocation }, function() {
-      console.log('已更新存储中的模拟位置');
+      console.log('Updated mock location in storage');
     });
     
-    console.log('模拟位置已更新:', mockGeolocation);
+    console.log('Mock location updated:', mockGeolocation);
     
     // 更新所有已连接标签页的模拟位置
     updateAllTabsGeolocation();
@@ -78,11 +78,11 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (tabId) {
       attachDebugger(tabId)
         .then(result => {
-          console.log(`成功连接到标签页 ${tabId} 的调试器`);
+          console.log(`Successfully connected debugger to tab ${tabId}`);
           sendResponse({ success: true, result });
         })
         .catch(error => {
-          console.error(`连接到标签页 ${tabId} 的调试器失败:`, error);
+          console.error(`Failed to connect debugger to tab ${tabId}:`, error);
           sendResponse({ success: false, error: error.message });
         });
       return true;
@@ -109,18 +109,18 @@ async function attachDebugger(tabId) {
     // 检查标签页URL
     const tab = await chrome.tabs.get(tabId);
     if (tab.url.startsWith('chrome://')) {
-      console.log(`不支持在 chrome:// URL 页面上附加调试器: ${tab.url}`);
+      console.log(`Cannot attach debugger to chrome:// URLs: ${tab.url}`);
       return { error: 'Cannot attach debugger to chrome:// URLs' };
     }
 
     if (attachedTabs.has(tabId)) {
-      console.log(`调试器已连接到标签 ${tabId}`);
+      console.log(`Debugger already connected to tab ${tabId}`);
       return { alreadyAttached: true };
     }
     
     // 连接到调试器
     await chrome.debugger.attach({ tabId }, '1.3');
-    console.log(`调试器已连接到标签 ${tabId}`);
+    console.log(`Debugger already connected to tab ${tabId}`);
     
     // 记录已连接的标签页
     attachedTabs.set(tabId, true);
@@ -133,7 +133,7 @@ async function attachDebugger(tabId) {
     
     return { attached: true };
   } catch (error) {
-    console.error(`连接到标签 ${tabId} 的调试器时出错:`, error);
+    console.error(`Error connecting to debugger for tab ${tabId}:`, error);
     throw error;
   }
 }
@@ -149,17 +149,17 @@ async function detachDebugger(tabId) {
     try {
       await chrome.debugger.sendCommand({ tabId }, 'Emulation.clearGeolocationOverride');
     } catch (e) {
-      console.warn(`清除标签 ${tabId} 的地理位置覆盖时出错:`, e);
+      console.warn(`Error clearing geolocation override for tab ${tabId}:`, e);
     }
     
     // 断开连接
     await chrome.debugger.detach({ tabId });
-    console.log(`已断开标签 ${tabId} 的调试器连接`);
+    console.log(`Disconnected debugger from tab ${tabId}`);
     
     // 移除记录
     attachedTabs.delete(tabId);
   } catch (error) {
-    console.error(`断开标签 ${tabId} 的调试器连接时出错:`, error);
+    console.error(`Error disconnecting debugger from tab ${tabId}:`, error);
     throw error;
   }
 }
@@ -171,7 +171,7 @@ async function detachDebugger(tabId) {
 async function enableGeolocitionMock(tabId) {
   // 检查mockGeolocation是否定义
   if (!mockGeolocation) {
-    console.warn(`模拟位置对象未定义，使用默认值`);
+    console.warn(`Mock location object undefined, using default value`);
     mockGeolocation = {
       latitude: 37.7749,
       longitude: -122.4194,
@@ -191,13 +191,13 @@ async function setGeoLocationMock(tabId, latitude, longitude) {
   try {
     // 验证参数
     if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-      console.error(`设置模拟位置参数无效: 纬度 ${latitude}, 经度 ${longitude}`);
+      console.error(`Invalid mock location parameters: latitude ${latitude}, longitude ${longitude}`);
       return false;
     }
     
     // 检查标签页是否存在
     if (!attachedTabs.has(tabId)) {
-      console.warn(`标签 ${tabId} 没有连接调试器，尝试重新连接`);
+      console.warn(`Tab ${tabId} has no debugger connected, attempting to reconnect`);
       await attachDebugger(tabId);
     }
     
@@ -208,22 +208,22 @@ async function setGeoLocationMock(tabId, latitude, longitude) {
       accuracy: 10
     });
     
-    console.log(`已更新标签 ${tabId} 的模拟位置: 纬度 ${latitude}, 经度 ${longitude}`);
+    console.log(`Updated mock location for tab ${tabId}: latitude ${latitude}, longitude ${longitude}`);
     return true;
   } catch (error) {
-    console.error(`更新标签 ${tabId} 的模拟位置时出错:`, error);
+    console.error(`Error updating mock location for tab ${tabId}:`, error);
     
     // 如果是调试器连接问题，尝试重新连接
     if (error.message && (error.message.includes('Debugger is not attached') || 
                           error.message.includes('Cannot access') || 
                           error.message.includes('not found'))) {
       try {
-        console.log(`尝试重新连接标签 ${tabId} 的调试器`);
+        console.log(`Attempting to reconnect debugger for tab ${tabId}`);
         await detachDebugger(tabId).catch(() => {});
         await attachDebugger(tabId);
         return true;
       } catch (e) {
-        console.error(`重新连接标签 ${tabId} 的调试器失败:`, e);
+        console.error(`Failed to reconnect debugger for tab ${tabId}:`, e);
       }
     }
     
@@ -237,7 +237,7 @@ async function setGeoLocationMock(tabId, latitude, longitude) {
 async function updateAllTabsGeolocation() {
   // 检查当前是否有模拟位置
   if (!mockGeolocation) {
-    console.warn('没有模拟位置数据，无法更新标签页');
+    console.warn('No mock location data available, cannot update tabs');
     return;
   }
   
@@ -247,13 +247,13 @@ async function updateAllTabsGeolocation() {
     await setGeoLocationMock(tabId, mockGeolocation.latitude, mockGeolocation.longitude)
       .then(success => {
         if (success) {
-          console.log(`已更新标签 ${tabId} 的模拟位置`);
+          console.log(`Updated mock location for tab ${tabId}`);
         }
       })
       .catch(error => {
-        console.error(`更新标签 ${tabId} 的模拟位置时出错:`, error);
+        console.error(`Error updating mock location for tab ${tabId}:`, error);
       });
   }
 }
 
-console.log('后台脚本已加载');
+console.log('Background script loaded');

@@ -38,6 +38,9 @@
 
   <div class="toolbar">
     <select id="savedLocations" title="Saved locations">
+      <option value="">-- Select a location --</option>
+      <option disabled="disabled">.................</option>
+      <option value="current-physical-location" class="physical-location-option">Current Physical Location</option>
     </select>
     <button id="saveLocation" title="Save current location"><i class="fas fa-save"></i></button>
     <button id="manageLocations" title="Manage saved locations"><i class="fas fa-list"></i></button>
