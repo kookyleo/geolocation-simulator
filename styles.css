@@ -42,7 +42,7 @@ html {
 
 .info-panel {
     bottom: 10px;
-    z-index: 1000;
+    z-index: 1010;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .65);
@@ -57,7 +57,7 @@ html {
 
 .info-toggle,
 .location-toggle {
-    z-index: 999;
+    z-index: 1009;
     width: 30px;
     height: 30px;
     border-radius: 2px;
@@ -94,7 +94,7 @@ html {
     position: absolute;
     top: 10px;
     right: 10px;
-    z-index: 1000;
+    z-index: 1010;
     background-color: #fff;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(9, 30, 66, .25);
@@ -413,7 +413,7 @@ html {
     flex: 1;
     position: relative;
     margin-top: 0;
-    padding-top: 24px
+    padding-top: 32px
 }
 
 .json-editor {
@@ -1206,10 +1206,6 @@ html {
     font-size: 14px;
     color: #666;
     margin-bottom: 6px
-}
-
-.grid-card-content {
-    padding-right: 80px
 }
 
 .grid-card-edit-mode {
