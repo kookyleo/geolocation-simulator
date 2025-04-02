@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "json5": "^2.2.3",
+    "monaco-editor": "^0.40.0"
+  },
+  "name": "geolocation",
+  "version": "1.0.0",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "directories": {
+    "lib": "lib"
+  },
+  "description": ""
+}

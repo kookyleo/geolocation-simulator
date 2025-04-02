@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Geolocation Simulator",
+  "version": "1.0",
+  "description": "在侧边面板中使用地图模拟地理位置。",
+  "permissions": [
+    "sidePanel", 
+    "geolocation",
+    "debugger",
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "action": {
+    "default_title": "打开地理位置模拟器"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
