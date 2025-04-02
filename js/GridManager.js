@@ -12,6 +12,9 @@ class GridManager {
     
     // 绑定事件处理器
     this._setupEventListeners();
+    
+    // 设置ESC键关闭功能
+    this._setupEscKeyListener();
   }
   
   /**
@@ -255,6 +258,21 @@ class GridManager {
   }
   
   /**
+   * 设置ESC键关闭网格管理器
+   * @private
+   */
+  _setupEscKeyListener() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('manageGridsModal');
+        if (modal && (modal.style.display === 'flex' || modal.style.display === 'block')) {
+          this.closeGridManager();
+        }
+      }
+    });
+  }
+  
+  /**
    * 渲染网格列表
    */
   renderGrids(newGridIndex = -1) {
@@ -319,6 +337,12 @@ class GridManager {
         card.appendChild(buttons); // 按钮现在是绝对定位的，会浮动在右上角
         card.appendChild(editorContainer);
         container.appendChild(card);
+        
+        // 添加双击事件监听器
+        card.addEventListener('dblclick', () => {
+          // 触发编辑按钮点击
+          editBtn.click();
+        });
         
         // 绑定按钮事件
         const editBtn = buttons.querySelector('.edit-btn');
@@ -482,6 +506,12 @@ class GridManager {
       card.appendChild(buttons); // 按钮现在是绝对定位的，会浮动在右上角
       card.appendChild(editorContainer);
       container.appendChild(card);
+      
+      // 添加双击事件监听器
+      card.addEventListener('dblclick', () => {
+        // 触发编辑按钮点击
+        editBtn.click();
+      });
       
       // 绑定按钮事件
       const gridSwitch = buttons.querySelector('.grid-switch');

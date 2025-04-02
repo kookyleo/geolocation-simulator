@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <!-- 移除内联脚本，将其放入外部JS文件 -->
 </head>
+
 <body>
   <div id="map"></div>
   <div class="info-panel">
@@ -20,43 +22,23 @@
     <div>纬度: <span id="lat">37.7749</span></div>
     <div>经度: <span id="lng">-122.4194</span></div>
     <p><small>
-      <b>快捷键：</b><br>
-      ↑↓←→ - 移动地图<br>
-      Cmd+方向键 - 微调标记位置<br>
-      Cmd+Shift+方向键 - 大幅调整标记位置
-    </small></p>
+        <b>快捷键：</b><br>
+        ↑↓←→ - 移动地图<br>
+        Cmd+方向键 - 微调标记位置<br>
+        Cmd+Shift+方向键 - 大幅调整标记位置
+      </small></p>
   </div>
-  
+
   <div class="location-toggle" title="显示当前真实位置"><i class="fas fa-location-arrow"></i></div>
   <div class="info-toggle hidden">i</div>
-  
+
   <div class="toolbar">
     <select id="savedLocations" title="已保存的位置">
     </select>
     <button id="saveLocation" title="保存当前位置"><i class="fas fa-save"></i></button>
     <button id="manageLocations" title="管理保存的位置"><i class="fas fa-list"></i></button>
-    <button id="manageGrids" title="管理六边形网格"><img src="images/bee.png" alt="bee" style="width: 16px; height: 16px;"></button>
-  </div>
-  
-  <!-- 网格管理弹层 -->
-  <div id="manageGridsModal" class="modal">
-    <div class="modal-content hexagon-grid-modal">
-      <div class="grid-header">
-        <div class="header-left">
-          <button class="back-btn" id="closeGridsManageModal"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="grid-title">HexagonGrid</h2>
-        </div>
-        <div class="header-right">
-          <button id="importGridsButton" class="action-btn" title="导入网格"><i class="fas fa-arrow-down"></i></button>
-          <button id="exportGridsButton" class="action-btn" title="导出网格"><i class="fas fa-arrow-up"></i></button>
-          <button id="addNewGrid" class="add-btn" title="添加新网格"><i class="fas fa-plus"></i></button>
-        </div>
-      </div>
-      
-      <div id="gridsContainer" class="grids-container">
-        <!-- 网格卡片将动态插入到这里 -->
-      </div>
-    </div>
+    <button id="manageGrids" title="管理六边形网格"><img src="images/bee.png" alt="bee"
+        style="width: 16px; height: 16px;"></button>
   </div>
 
   <!-- 保存位置弹层 -->
@@ -71,7 +53,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- 位置管理弹层 -->
   <div id="manageLocationsModal" class="modal">
     <div class="modal-content hexagon-grid-modal">
@@ -86,33 +68,30 @@
           <button id="addNewLocation" class="add-btn" title="添加新位置"><i class="fas fa-plus"></i></button>
         </div>
       </div>
-      
+
       <div id="locationsContainer" class="grids-container">
         <!-- 位置卡片将动态插入到这里 -->
       </div>
     </div>
   </div>
-  
-  <!-- 编辑位置弹层 -->
-  <div id="editLocationModal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" id="closeEditLocationModal">&times;</button>
-      <h3 id="editModalTitle">编辑位置</h3>
-      <div class="form-group">
-        <label for="editName">位置名称</label>
-        <input type="text" id="editName" placeholder="输入位置名称" required>
+
+  <!-- 网格管理弹层 -->
+  <div id="manageGridsModal" class="modal">
+    <div class="modal-content hexagon-grid-modal">
+      <div class="grid-header">
+        <div class="header-left">
+          <button class="back-btn" id="closeGridsManageModal"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="grid-title">HexagonGrid</h2>
+        </div>
+        <div class="header-right">
+          <button id="importGridsButton" class="action-btn" title="导入网格"><i class="fas fa-arrow-down"></i></button>
+          <button id="exportGridsButton" class="action-btn" title="导出网格"><i class="fas fa-arrow-up"></i></button>
+          <button id="addNewGrid" class="add-btn" title="添加新网格"><i class="fas fa-plus"></i></button>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="editLatitude">纬度</label>
-        <input type="number" id="editLatitude" step="0.000001" required>
-      </div>
-      <div class="form-group">
-        <label for="editLongitude">经度</label>
-        <input type="number" id="editLongitude" step="0.000001" required>
-      </div>
-      <div class="button-group">
-        <button class="cancel" id="cancelEdit">取消</button>
-        <button class="save" id="confirmEdit">保存</button>
+
+      <div id="gridsContainer" class="grids-container">
+        <!-- 网格卡片将动态插入到这里 -->
       </div>
     </div>
   </div>
@@ -122,16 +101,17 @@
   <!-- Leaflet JS -->
   <script src="lib/leaflet.js"></script>
   <script src="lib/leaflet-providers.js"></script>
-  
+
   <!-- Monaco Editor -->
   <script src="js/monaco-config.js"></script>
   <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
   <script src="js/monaco-setup.js"></script>
-  
+
   <!-- 自定义元素 -->
   <script type="module" src="js/JsonEditor.js"></script>
-  
+
   <!-- 使用模块化的JS文件 -->
   <script type="module" src="js/index.js"></script>
 </body>
+
 </html>

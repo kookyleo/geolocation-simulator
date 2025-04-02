@@ -316,10 +316,43 @@ html {
     color: var(--ds-background-brand-bold, #0052CC)
 }
 
+
+
+
+
+
+
+
+
+
+
+.grid-card-buttons button:hover,
+.grid-card-buttons input[type=checkbox]:hover {
+    background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08))
+}
+
+
+
+.grid-card-buttons label {
+    color: var(--ds-text, #172B4D);
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 16px;
+    display: flex;
+    align-items: center
+}
+
+.card-header-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center
+}
+
 .grid-card-buttons .switch-group {
     display: flex;
     align-items: center;
-    gap: 4px
+    gap: 4px;
+    margin-right: 2px
 }
 
 .grid-card-buttons .label-text {
@@ -360,24 +393,10 @@ html {
     font-size: 14px
 }
 
-.grid-card-buttons button:hover,
-.grid-card-buttons input[type=checkbox]:hover {
-    background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08))
-}
-
 .grid-card-buttons input[type=checkbox]:focus {
     outline: 0;
     border-color: var(--ds-border-focused, #4C9AFF);
     box-shadow: 0 0 0 2px var(--ds-border-focused, #4C9AFF)
-}
-
-.grid-card-buttons label {
-    color: var(--ds-text, #172B4D);
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 16px;
-    display: flex;
-    align-items: center
 }
 
 .json-editor,
@@ -485,6 +504,9 @@ html {
 }
 
 .grid-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 8px;
     position: relative
 }
@@ -501,7 +523,7 @@ html {
 }
 
 .grid-card-delete {
-    position: absolute;
+    position: relative;
     top: 8px;
     right: 8px;
     color: var(--ds-text-danger, #DE350B)
@@ -859,7 +881,21 @@ html {
     width: 400px;
     max-width: 90%;
     max-height: 90vh;
-    overflow-y: auto
+    overflow-y: auto;
+    height: auto
+}
+
+/* 保存位置弹窗特定样式 */
+#saveLocationModal .modal-content {
+    height: auto;
+    min-height: auto;
+    padding-bottom: 12px;
+    max-height: none
+}
+
+#saveLocationModal {
+    align-items: flex-start;
+    padding-top: 80px
 }
 
 .config-row {

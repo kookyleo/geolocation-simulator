@@ -348,25 +348,51 @@ class MapController {
         },
         // 错误回调
         (error) => {
-          console.error('获取位置失败:', error.message);
+          console.error('获取位置失败:', error.message, error.code);
           
           // 恢复按钮图标
           if (locationButton) {
             locationButton.innerHTML = '<i class="fas fa-location-arrow"></i>';
           }
           
+          // 根据错误类型显示更友好的错误提示
+          let errorMsg = '';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMsg = '您拒绝了位置请求权限。请在浏览器设置中允许位置访问权限并重试。';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMsg = '当前无法获取位置信息。请确保您的设备已开启位置服务并处于可以获取GPS信号的环境。';
+              break;
+            case error.TIMEOUT:
+              errorMsg = '获取位置超时。请检查您的网络连接并重试。';
+              break;
+            default:
+              errorMsg = `无法获取当前位置: ${error.message}`;
+          }
+          
           // 显示错误提示
-          alert(`无法获取当前位置: ${error.message}`);
+          alert(errorMsg);
+          
+          // 如果是权限问题，提供更多帮助
+          if (error.code === error.PERMISSION_DENIED) {
+            console.info('提示用户如何开启位置权限');
+          }
         },
         // 选项
         {
           enableHighAccuracy: true,  // 尝试获取高精度位置
-          timeout: 10000,            // 10 秒超时
-          maximumAge: 0              // 不使用缓存的位置
+          timeout: 15000,            // 15 秒超时，增加超时时间以提高成功率
+          maximumAge: 30000          // 允许30秒内的缓存位置，减少定位失败的可能性
         }
       );
     } else {
-      alert('您的浏览器不支持地理位置 API');
+      alert('您的浏览器不支持地理位置 API。请尝试使用现代浏览器，如Chrome、Firefox或Safari的最新版本。');
+    }
+    
+    // 如果没有真实位置，使用默认位置作为回退方案
+    if (!this.realPositionMarker) {
+      console.log('使用默认位置作为回退方案');
     }
   }
 }

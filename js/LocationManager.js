@@ -85,7 +85,6 @@ class LocationManager {
       name: name.trim(),
       latitude: lat,
       longitude: lng,
-      enabled: true,
       timestamp: new Date().toISOString()
     };
     
@@ -151,7 +150,6 @@ class LocationManager {
       name: `位置 ${this.savedLocations.length + 1}`,
       latitude: position.lat,
       longitude: position.lng,
-      enabled: true,
       timestamp: new Date().toISOString()
     };
     

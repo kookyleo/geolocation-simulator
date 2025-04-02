@@ -28,22 +28,19 @@ class UIController {
     this.exportButton = document.getElementById('exportButton');
     this.importInput = document.getElementById('importInput');
 
-    // 编辑位置相关元素
-    this.editLocationModal = document.getElementById('editLocationModal');
-    this.editModalTitle = document.getElementById('editModalTitle');
-    this.editNameInput = document.getElementById('editName');
-    this.editLatitudeInput = document.getElementById('editLatitude');
-    this.editLongitudeInput = document.getElementById('editLongitude');
-    this.confirmEditBtn = document.getElementById('confirmEdit');
-    this.cancelEditBtn = document.getElementById('cancelEdit');
-    this.closeEditLocationModalBtn = document.getElementById('closeEditLocationModal');
+    // 保存位置弹窗关闭按钮
     this.closeSaveLocationModalBtn = document.getElementById('closeSaveLocationModal');
+    
+    // 编辑位置已集成到JSON编辑器中，不再需要单独的编辑模态框
 
     // 当前编辑的位置索引
     this.currentEditIndex = -1;
 
     // 初始化事件监听器
     this._setupEventListeners();
+    
+    // 初始化ESC键关闭模态框功能
+    this._setupEscKeyListener();
   }
 
   /**
@@ -108,10 +105,7 @@ class UIController {
       this.manageLocationsModal.style.display = 'none';
     });
 
-    // 关闭编辑位置模态框
-    this.closeEditLocationModalBtn.addEventListener('click', () => {
-      this.editLocationModal.style.display = 'none';
-    });
+    // 编辑位置已集成到JSON编辑器中
 
     // 关闭保存位置模态框
     this.closeSaveLocationModalBtn.addEventListener('click', () => {
@@ -124,13 +118,9 @@ class UIController {
       this.createNewLocation();
     });
 
-    // 编辑位置模态框的确认按钮
-    this.confirmEditBtn.addEventListener('click', () => this.saveEditedLocation());
+    // 编辑位置已集成到JSON编辑器中
 
-    // 编辑位置模态框的取消按钮
-    this.cancelEditBtn.addEventListener('click', () => {
-      this.editLocationModal.style.display = 'none';
-    });
+    // 编辑位置已集成到JSON编辑器中
 
     // 导出按钮点击事件
     this.exportButton.addEventListener('click', () => this.exportLocations());
@@ -164,75 +154,22 @@ class UIController {
   }
 
   /**
-   * 打开编辑位置模态框
+   * 打开编辑位置
    * @param {number} index - 位置索引
    */
   openEditLocationModal(index) {
-    const location = this.locationManager.getLocationForEdit(index);
-    if (!location) return;
-
-    this.currentEditIndex = index;
-    this.editModalTitle.textContent = '编辑位置';
-    this.editNameInput.value = location.name;
-    this.editLatitudeInput.value = location.latitude;
-    this.editLongitudeInput.value = location.longitude;
-
-    this.editLocationModal.style.display = 'flex';
-    this.editNameInput.focus();
-    this.editNameInput.select();
+    // 编辑功能已集成到JSON编辑器中
+    // 这个方法保留仅为了兼容性
+    console.log('请使用卡片中的编辑按钮进行编辑');
   }
 
   /**
    * 保存编辑的位置
+   * @deprecated 已集成到JSON编辑器中
    */
   saveEditedLocation() {
-    const name = this.editNameInput.value;
-    const lat = parseFloat(this.editLatitudeInput.value);
-    const lng = parseFloat(this.editLongitudeInput.value);
-
-    // 验证输入
-    if (!name || name.trim() === '') {
-      alert('请输入位置名称');
-      return;
-    }
-
-    if (isNaN(lat) || isNaN(lng)) {
-      alert('请输入有效的经纬度');
-      return;
-    }
-
-    // 验证经纬度范围
-    if (lat < -90 || lat > 90) {
-      alert('纬度必须在 -90 到 90 之间');
-      return;
-    }
-
-    if (lng < -180 || lng > 180) {
-      alert('经度必须在 -180 到 180 之间');
-      return;
-    }
-
-    // 保存位置
-    if (this.currentEditIndex >= 0) {
-      // 编辑现有位置
-      const locationData = this.locationManager.getLocationForEdit(this.currentEditIndex);
-      if (locationData) {
-        locationData.name = name.trim();
-        locationData.latitude = lat;
-        locationData.longitude = lng;
-        
-        if (this.locationManager.editLocation(this.currentEditIndex, locationData)) {
-          this.editLocationModal.style.display = 'none';
-          this.renderLocations();
-        }
-      }
-    } else {
-      // 添加新位置
-      if (this.locationManager.saveCurrentLocation(name, lat, lng)) {
-        this.editLocationModal.style.display = 'none';
-        this.renderLocations();
-      }
-    }
+    // 编辑功能已集成到JSON编辑器中
+    console.log('请使用卡片中的编辑按钮进行编辑');
   }
 
   /**
@@ -298,11 +235,8 @@ class UIController {
         const buttons = document.createElement('div');
         buttons.className = 'grid-card-buttons';
         buttons.innerHTML = `
-          <div class="switch-group">
-            <span class="label-text">使用</span>
-            <input type="checkbox" class="location-switch" id="location-switch-${index}" ${location.enabled ? 'checked' : ''}>
-          </div>
           <div class="action-group">
+            <button class="use-btn" title="使用位置"><i class="fas fa-map-marker-alt"></i></button>
             <button class="edit-btn" title="编辑位置"><i class="fas fa-edit"></i></button>
             <button class="delete-btn" title="删除位置"><i class="fas fa-trash-alt"></i></button>
           </div>
@@ -321,31 +255,25 @@ class UIController {
         card.appendChild(editorContainer);
         container.appendChild(card);
         
+        // 添加双击事件监听器
+        card.addEventListener('dblclick', (e) => {
+          // 防止事件冒泡到editorContainer
+          e.stopPropagation();
+          // 触发编辑按钮点击
+          editBtn.click();
+        });
+        
         // 绑定按钮事件
-        const locationSwitch = buttons.querySelector('.location-switch');
-        const labelText = buttons.querySelector('.label-text');
+        const useBtn = buttons.querySelector('.use-btn');
         const editBtn = buttons.querySelector('.edit-btn');
         const deleteBtn = buttons.querySelector('.delete-btn');
         
-        // 为label文本添加点击事件，模拟label功能
-        labelText.addEventListener('click', () => {
-          locationSwitch.click();
-        });
-        
-        // 切换位置启用状态
-        locationSwitch.addEventListener('change', () => {
-          const isEnabled = locationSwitch.checked;
-          const locationData = this.locationManager.getLocationForEdit(index);
-          if (locationData) {
-            locationData.enabled = isEnabled;
-            this.locationManager.editLocation(index, locationData);
-            
-            if (isEnabled) {
-              const location = this.locationManager.useLocation(index);
-              if (location) {
-                this.mapController.setMapLocation(location.latitude, location.longitude);
-              }
-            }
+        // 使用位置按钮事件
+        useBtn.addEventListener('click', () => {
+          const location = this.locationManager.useLocation(index);
+          if (location) {
+            this.mapController.setMapLocation(location.latitude, location.longitude);
+            this.closeLocationManager();
           }
         });
         
@@ -400,16 +328,16 @@ class UIController {
             }
           });
           
-          // 使用位置（双击编辑器区域）
-          editorContainer.addEventListener('dblclick', () => {
-            if (!editBtn.classList.contains('editing')) {
-              const location = this.locationManager.useLocation(index);
-              if (location) {
-                this.mapController.setMapLocation(location.latitude, location.longitude);
-                this.closeLocationManager();
-              }
-            }
-          });
+          // 使用位置（双击编辑器区域） - 禁用此功能，因为现在我们在卡片上有双击编辑功能
+          // editorContainer.addEventListener('dblclick', () => {
+          //   if (!editBtn.classList.contains('editing')) {
+          //     const location = this.locationManager.useLocation(index);
+          //     if (location) {
+          //       this.mapController.setMapLocation(location.latitude, location.longitude);
+          //       this.closeLocationManager();
+          //     }
+          //   }
+          // });
         }).catch(error => {
           console.error('Monaco 编辑器加载失败:', error);
           
@@ -488,16 +416,16 @@ class UIController {
         <div class="grid-card" data-index="${index}">
           <div class="grid-card-header">
             <h3>${location.name}</h3>
-            <button class="grid-card-delete" data-index="${index}" title="删除位置"><i class="fas fa-trash"></i></button>
+            <div class="card-header-actions">
+              <button class="grid-btn use-location" data-index="${index}" title="使用位置"><i class="fas fa-map-marker-alt"></i></button>
+              <button class="grid-btn edit-location" data-index="${index}" title="编辑位置"><i class="fas fa-edit"></i></button>
+              <button class="grid-card-delete" data-index="${index}" title="删除位置"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
           <div class="grid-card-content">
             <div class="grid-field"><span>纬度:</span> ${location.latitude}</div>
             <div class="grid-field"><span>经度:</span> ${location.longitude}</div>
             <div class="grid-field"><span>保存时间:</span> ${formattedDate}</div>
-            <div class="grid-card-actions">
-              <button class="grid-btn use-location" data-index="${index}" title="使用位置"><i class="fas fa-map-marker-alt"></i> 使用</button>
-              <button class="grid-btn edit-location" data-index="${index}" title="编辑位置"><i class="fas fa-edit"></i> 编辑</button>
-            </div>
           </div>
         </div>
       `;
@@ -505,6 +433,23 @@ class UIController {
     
     this.locationsContainer.innerHTML = html;
     this._setupFallbackButtonListeners();
+    
+    // 添加双击事件监听器
+    const cards = document.querySelectorAll('.grid-card');
+    cards.forEach(card => {
+      card.addEventListener('dblclick', (e) => {
+        // 防止事件冒泡
+        e.stopPropagation();
+        // 防止默认行为
+        e.preventDefault();
+        
+        const index = parseInt(card.dataset.index);
+        const editBtn = card.querySelector('.edit-location');
+        if (editBtn) {
+          editBtn.click();
+        }
+      });
+    });
   }
 
   /**
@@ -530,7 +475,10 @@ class UIController {
     editButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
-        this.openEditLocationModal(index);
+        // 显示提示消息，建议用户使用新的JSON编辑器模式
+        alert('请刷新页面使用新的JSON编辑器进行编辑');
+        // 重新渲染位置列表，使用JSON编辑器模式
+        this.renderLocations();
       });
     });
 
@@ -597,7 +545,7 @@ class UIController {
     reader.onload = (e) => {
       const jsonData = e.target.result;
       if (this.locationManager.importLocations(jsonData)) {
-        this.renderLocationsTable();
+        this.renderLocations();
       }
 
       // 重置文件输入，以便可以再次选择同一文件
@@ -612,6 +560,53 @@ class UIController {
     reader.readAsText(file);
   }
 
+  /**
+   * 设置ESC键关闭模态框功能
+   * @private
+   */
+  _setupEscKeyListener() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        // 关闭所有模态框
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+          if (modal.style.display === 'flex' || modal.style.display === 'block') {
+            // 根据模态框ID执行相应的关闭操作
+            if (modal.id === 'manageLocationsModal') {
+              this.closeLocationManager();
+            } else if (modal.id === 'manageGridsModal') {
+              if (typeof this.closeGridManager === 'function') {
+                this.closeGridManager();
+              } else {
+                modal.style.display = 'none';
+              }
+            } else if (modal.id === 'saveLocationModal') {
+              this.saveLocationModal.style.display = 'none';
+              this.locationNameInput.value = '';
+            } else {
+              // 其他模态框的通用处理
+              modal.style.display = 'none';
+            }
+          }
+        });
+      }
+    });
+    
+    // 添加点击模态框外部关闭功能
+    this.saveLocationModal.addEventListener('click', (e) => {
+      if (e.target === this.saveLocationModal) {
+        this.saveLocationModal.style.display = 'none';
+        this.locationNameInput.value = '';
+      }
+    });
+    
+    this.manageLocationsModal.addEventListener('click', (e) => {
+      if (e.target === this.manageLocationsModal) {
+        this.closeLocationManager();
+      }
+    });
+  }
+  
   /**
    * 设置信息面板的收起/展开功能
    * @private
