@@ -286,7 +286,6 @@ html {
     z-index: 10;
     background-color: var(--ds-surface-raised, #FFFFFF);
     border: 1px solid var(--ds-surface-sunken, #F4F5F7);
-    padding: 2px
 }
 
 .grid-card-buttons .action-group {
@@ -316,22 +315,10 @@ html {
     color: var(--ds-background-brand-bold, #0052CC)
 }
 
-
-
-
-
-
-
-
-
-
-
 .grid-card-buttons button:hover,
 .grid-card-buttons input[type=checkbox]:hover {
     background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08))
 }
-
-
 
 .grid-card-buttons label {
     color: var(--ds-text, #172B4D);
@@ -351,8 +338,7 @@ html {
 .grid-card-buttons .switch-group {
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-right: 2px
+    gap: 2px;
 }
 
 .grid-card-buttons .label-text {
@@ -364,39 +350,6 @@ html {
     align-items: center;
     user-select: none;
     padding-left: 4px
-}
-
-.grid-card-buttons input[type=checkbox] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
-    background-color: var(--ds-background-neutral, #F4F5F7)
-}
-
-.grid-card-buttons input[type=checkbox]:checked {
-    background-color: var(--ds-background-brand-bold, #0052CC);
-    border-color: var(--ds-background-brand-bold, #0052CC)
-}
-
-.grid-card-buttons input[type=checkbox]:checked::after {
-    content: "✓";
-    color: #fff;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 14px
-}
-
-.grid-card-buttons input[type=checkbox]:focus {
-    outline: 0;
-    border-color: var(--ds-border-focused, #4C9AFF);
-    box-shadow: 0 0 0 2px var(--ds-border-focused, #4C9AFF)
 }
 
 .json-editor,
@@ -657,7 +610,6 @@ html {
 
 .modal-content input {
     box-sizing: border-box;
-    height: 32px
 }
 
 .modal-content .button-group {

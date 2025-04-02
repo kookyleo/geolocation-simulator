@@ -58,6 +58,8 @@ class GridManager {
       const savedGrids = localStorage.getItem('hexagonGrids');
       if (savedGrids) {
         this.grids = JSON.parse(savedGrids);
+        // 加载后立即更新网格显示
+        this.updateGridDisplay();
       }
     } catch (error) {
       console.error('加载网格配置失败:', error);
@@ -71,8 +73,34 @@ class GridManager {
   saveGridsToLocalStorage() {
     try {
       localStorage.setItem('hexagonGrids', JSON.stringify(this.grids));
+      // 触发网格更新
+      this.updateGridDisplay();
     } catch (error) {
       console.error('保存网格配置失败:', error);
+    }
+  }
+
+  /**
+   * 更新网格显示
+   */
+  updateGridDisplay() {
+    if (this.hexagonGridLayer) {
+      // 首先隐藏所有网格
+      this.hexagonGridLayer.hideGrid();
+      
+      // 遍历所有网格配置
+      this.grids.forEach(grid => {
+        if (grid.enabled) {
+          // 更新网格参数
+          this.hexagonGridLayer.setGridOptions({
+            radius: grid.gridRadius,
+            areaRadius: grid.areaRadius,
+            center: [grid.latitude, grid.longitude]
+          });
+          // 显示启用的网格
+          this.hexagonGridLayer.showGrid();
+        }
+      });
     }
   }
   
@@ -481,6 +509,8 @@ class GridManager {
         <button class="delete-btn">delete</button>
       `;
       
+
+      
       // 创建编辑器容器
       const editorContainer = document.createElement('div');
       editorContainer.className = 'json-editor-container';
@@ -525,11 +555,8 @@ class GridManager {
         switchLabel.textContent = isEnabled ? '启用' : '禁用';
         this.saveGridsToLocalStorage();
         
-        if (isEnabled) {
-          this.applyGrid(index);
-        } else if (this.hexagonGridLayer && this.hexagonGridLayer.visible) {
-          this.hexagonGridLayer.hideGrid();
-        }
+        // 立即更新网格显示
+        this.updateGridDisplay();
       });
       
       editBtn.addEventListener('click', () => {
