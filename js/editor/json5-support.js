@@ -124,7 +124,7 @@ function initializeJSON5Language() {
           position.column
         ),
         contents: [
-          { value: 'JSON5 支持注释、尾随逗号、单引号字符串、十六进制数等功能' }
+          { value: 'JSON5 support for comments, trailing commas, single quotes, hexadecimal numbers, and more' }
         ]
       };
     }

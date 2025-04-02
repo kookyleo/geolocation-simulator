@@ -153,7 +153,7 @@ class GridController {
    */
   deleteGrid(index) {
     if (index >= 0 && index < this.grids.length) {
-      if (confirm('确定要删除这个网格配置吗？')) {
+      if (confirm('Delete this grid configuration?')) {
         // 如果当前正在显示该网格，先隐藏它
         if (this.hexagonGridLayer && this.hexagonGridLayer.visible) {
           this.hexagonGridLayer.hideGrid();
@@ -169,8 +169,6 @@ class GridController {
       }
     }
   }
-  
-
   
   /**
    * 应用网格配置到地图
@@ -249,8 +247,8 @@ class GridController {
     } else {
       // 展示模式 - 显示格式化的字段
       const mergeAreasDisplay = grid.mergeAreas && grid.mergeAreas.length > 0 
-        ? `<div class="grid-field"><span>连续区域:</span> ${grid.mergeAreas.length}个区域</div>`
-        : `<div class="grid-field"><span>连续区域:</span> 无</div>`;
+        ? `<div class="grid-field"><span>Continuous Areas:</span> ${grid.mergeAreas.length} areas</div>`
+        : `<div class="grid-field"><span>Continuous Areas:</span> None</div>`;
         
       card.innerHTML = `
         <div class="grid-card-header">
@@ -487,7 +485,7 @@ class GridController {
                 editBtn.title = 'Edit Grid';
                 textarea.readOnly = true;
               } catch (error) {
-                console.error('解析JSON失败:', error);
+                console.error('Failed to parse JSON:', error);
               }
             } else {
               // 进入编辑模式
@@ -503,7 +501,7 @@ class GridController {
         deleteBtn.addEventListener('click', () => this.deleteGrid(index));
       });
     }).catch(error => {
-      console.error('JSON5 支持模块加载失败:', error);
+      console.error('Failed to load JSON5 support module:', error);
       // 如果加载失败，使用原始的渲染方式
       this._renderGridsWithFallback(container);
     });
@@ -578,7 +576,7 @@ class GridController {
       gridSwitch.addEventListener('change', () => {
         const isEnabled = gridSwitch.checked;
         this.grids[index].enabled = isEnabled;
-        switchLabel.textContent = isEnabled ? '启用' : '禁用';
+        switchLabel.textContent = isEnabled ? 'Enable' : 'Disable';
         this.saveGridsToLocalStorage();
         
         // 立即更新网格显示
@@ -610,7 +608,7 @@ class GridController {
             editBtn.textContent = 'edit';
             textarea.readOnly = true;
           } catch (error) {
-            console.error('解析JSON失败:', error);
+            console.error('Failed to parse JSON:', error);
           }
         } else {
           // 进入编辑模式

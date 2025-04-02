@@ -97,7 +97,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 chrome.tabs.onRemoved.addListener((tabId) => {
   if (attachedTabs.has(tabId)) {
     detachDebugger(tabId)
-      .catch(error => console.error(`断开标签 ${tabId} 的调试器连接时出错:`, error));
+      .catch(error => console.error(`Failed to disconnect debugger from tab ${tabId}:`, error));
   }
 });
 

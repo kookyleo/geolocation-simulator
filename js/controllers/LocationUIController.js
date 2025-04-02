@@ -224,9 +224,9 @@ class LocationUIController {
       buttons.className = 'grid-card-buttons';
       buttons.innerHTML = `
         <div class="action-group">
-          <button class="use-btn" title="使用位置"><i class="fas fa-map-marker-alt"></i></button>
-          <button class="edit-btn" title="编辑位置"><i class="fas fa-edit"></i></button>
-          <button class="delete-btn" title="删除位置"><i class="fas fa-trash-alt"></i></button>
+          <button class="use-btn" title="Use location"><i class="fas fa-map-marker-alt"></i></button>
+          <button class="edit-btn" title="Edit location"><i class="fas fa-edit"></i></button>
+          <button class="delete-btn" title="Delete location"><i class="fas fa-trash-alt"></i></button>
         </div>
       `;
       
@@ -270,7 +270,7 @@ class LocationUIController {
       
       // 删除按钮事件
       deleteBtn.addEventListener('click', () => {
-        if (confirm('确定要删除这个位置吗？')) {
+        if (confirm('Are you sure you want to delete this location?')) {
           if (this.locationManager.deleteLocation(index)) {
             this.renderLocations();
           }
@@ -303,24 +303,24 @@ class LocationUIController {
                 editBtn.classList.remove('editing');
                 cardContent?.classList.remove('editing');
                 editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                editBtn.title = '编辑位置';
+                editBtn.title = 'Edit location';
                 jsonEditor.setEditMode(false);
               }
             } catch (error) {
-              console.error('位置数据格式无效，请检查后重试');
-              alert('位置数据格式无效，请检查后重试');
+              console.error('The location data format is invalid, please check and try again');
+              alert('The location data format is invalid, please check and try again');
             }
           } else {
             // 进入编辑模式
             editBtn.classList.add('editing');
             cardContent?.classList.add('editing');
             editBtn.innerHTML = '<i class="fas fa-save"></i>';
-            editBtn.title = '保存位置';
+            editBtn.title = 'Save location';
             jsonEditor.setEditMode(true);
           }
         });
       } catch (error) {
-        console.error('编辑器加载失败:', error);
+        console.error('Failed to load editor:', error);
         this.renderFallbackLocation(card, location, index);
       }
     }
@@ -340,10 +340,10 @@ class LocationUIController {
     const content = document.createElement('div');
     content.className = 'grid-card-content';
     content.innerHTML = `
-      <div class="grid-field"><span>名称:</span> ${location.name}</div>
-      <div class="grid-field"><span>纬度:</span> ${location.latitude}</div>
-      <div class="grid-field"><span>经度:</span> ${location.longitude}</div>
-      <div class="grid-field"><span>时间戳:</span> ${formattedDate}</div>
+      <div class="grid-field"><span>Name:</span> ${location.name}</div>
+      <div class="grid-field"><span>Latitude:</span> ${location.latitude}</div>
+      <div class="grid-field"><span>Longitude:</span> ${location.longitude}</div>
+      <div class="grid-field"><span>Timestamp:</span> ${formattedDate}</div>
     `;
     
     // 替换卡片内容
@@ -358,7 +358,7 @@ class LocationUIController {
     const editBtn = card.querySelector('.edit-btn');
     if (editBtn) {
       editBtn.addEventListener('click', () => {
-        alert('请刷新页面并使用新的JSON编辑器进行编辑');
+        alert('Please refresh the page and use the new JSON editor to edit');
       });
     }
   }
@@ -370,7 +370,7 @@ class LocationUIController {
     const locations = this.locationManager.getSavedLocations();
 
     if (locations.length === 0) {
-      alert('没有可导出的位置');
+      alert('No locations to export');
       return;
     }
 
@@ -402,7 +402,7 @@ class LocationUIController {
 
     // 检查文件类型
     if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-      alert('请选择JSON文件');
+      alert('Please select a JSON file');
       event.target.value = '';
       return;
     }
@@ -420,7 +420,7 @@ class LocationUIController {
     };
 
     reader.onerror = () => {
-      alert('读取文件失败');
+      alert('Failed to read file');
       event.target.value = '';
     };
 
