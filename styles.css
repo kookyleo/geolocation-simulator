@@ -181,7 +181,22 @@ html {
 
 .grid-header {
     background-color: var(--ds-surface, #FFFFFF);
-    border-bottom: 1px solid var(--ds-border, #DFE1E6)
+    border-bottom: 1px solid var(--ds-border, #DFE1E6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .back-btn {
@@ -1181,6 +1196,24 @@ html {
 .grid-card-json-editor {
     width: 100%;
     font-family: monospace
+}
+
+.action-btn {
+    background: transparent;
+    border: 0;
+    font-size: 16px;
+    color: #42526E;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: rgba(9, 30, 66, 0.08);
 }
 
 .CodeMirror {

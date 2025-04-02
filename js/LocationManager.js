@@ -17,12 +17,16 @@ class LocationManager {
    * 加载保存的位置
    */
   loadSavedLocations() {
-    chrome.storage.local.get(['savedLocations'], (result) => {
-      if (result.savedLocations) {
-        this.savedLocations = result.savedLocations;
+    try {
+      const savedLocations = localStorage.getItem('savedLocations');
+      if (savedLocations) {
+        this.savedLocations = JSON.parse(savedLocations);
         this.updateSavedLocationsDropdown();
       }
-    });
+    } catch (error) {
+      console.error('加载位置失败:', error);
+      this.savedLocations = [];
+    }
   }
   
   /**
@@ -31,12 +35,13 @@ class LocationManager {
    * @param {string} message - 日志消息
    */
   _saveToStorage(message = '位置已更新') {
-    chrome.storage.local.set({
-      savedLocations: this.savedLocations
-    }, () => {
+    try {
+      localStorage.setItem('savedLocations', JSON.stringify(this.savedLocations));
       console.log(message);
       this.updateSavedLocationsDropdown();
-    });
+    } catch (error) {
+      console.error('保存位置失败:', error);
+    }
   }
 
   /**
@@ -80,10 +85,12 @@ class LocationManager {
       name: name.trim(),
       latitude: lat,
       longitude: lng,
+      enabled: true,
       timestamp: new Date().toISOString()
     };
     
-    this.savedLocations.push(newLocation);
+    // 将新位置添加到数组开头
+    this.savedLocations.unshift(newLocation);
     
     // 保存到本地存储
     this._saveToStorage('位置已保存');
@@ -97,6 +104,18 @@ class LocationManager {
    */
   getSavedLocations() {
     return this.savedLocations;
+  }
+  
+  /**
+   * 获取单个位置的详细信息
+   * @param {number} index - 位置索引
+   * @returns {Object|null} - 位置对象，如果无效则返回null
+   */
+  getLocationForEdit(index) {
+    if (index >= 0 && index < this.savedLocations.length) {
+      return this.savedLocations[index];
+    }
+    return null;
   }
 
   /**
@@ -114,36 +133,70 @@ class LocationManager {
     }
     return null;
   }
+  
+  /**
+   * 创建新的位置
+   * @param {Object} mapController - 地图控制器对象
+   * @returns {number} - 新创建位置的索引
+   */
+  createNewLocation(mapController) {
+    // 获取当前地图中心作为默认值
+    let position = { lat: 39.9042, lng: 116.4074 };
+    
+    if (mapController && mapController.marker) {
+      position = mapController.marker.getLatLng();
+    }
+    
+    const newLocation = {
+      name: `位置 ${this.savedLocations.length + 1}`,
+      latitude: position.lat,
+      longitude: position.lng,
+      enabled: true,
+      timestamp: new Date().toISOString()
+    };
+    
+    // 将新位置添加到数组开头
+    this.savedLocations.unshift(newLocation);
+    this._saveToStorage('新位置已创建');
+    
+    return 0; // 返回新位置的索引（始终是0，因为添加到了数组开头）
+  }
 
   /**
    * 编辑位置
    * @param {number} index - 位置索引
-   * @param {string} name - 新名称
-   * @param {number} lat - 新纬度
-   * @param {number} lng - 新经度
+   * @param {Object} updatedLocation - 更新后的位置对象
    * @returns {boolean} - 是否编辑成功
    */
-  editLocation(index, name, lat, lng) {
+  editLocation(index, updatedLocation) {
     if (index < 0 || index >= this.savedLocations.length) {
       return false;
     }
     
-    if (!name || name.trim() === '') {
-      alert('请输入位置名称');
+    try {
+      // 保留原始时间戳，如果没有则创建新的
+      const originalTimestamp = this.savedLocations[index].timestamp || new Date().toISOString();
+      
+      // 确保更新后的位置对象有必要的字段
+      if (!updatedLocation.name || typeof updatedLocation.latitude !== 'number' || typeof updatedLocation.longitude !== 'number') {
+        console.error('位置数据格式无效');
+        return false;
+      }
+      
+      // 更新位置，保留时间戳
+      this.savedLocations[index] = {
+        ...updatedLocation,
+        timestamp: originalTimestamp
+      };
+      
+      // 保存到本地存储
+      this._saveToStorage('位置已更新');
+      
+      return true;
+    } catch (error) {
+      console.error('编辑位置失败:', error);
       return false;
     }
-    
-    this.savedLocations[index] = {
-      name: name.trim(),
-      latitude: lat,
-      longitude: lng,
-      timestamp: new Date().toISOString()
-    };
-    
-    // 保存到本地存储
-    this._saveToStorage('位置已更新');
-    
-    return true;
   }
 
   /**

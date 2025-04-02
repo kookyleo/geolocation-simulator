@@ -33,6 +33,18 @@ class GridManager {
     if (addBtn) {
       addBtn.addEventListener('click', () => this.createNewGrid());
     }
+    
+    // 导入网格按钮
+    const importBtn = document.getElementById('importGridsButton');
+    if (importBtn) {
+      importBtn.addEventListener('click', () => this.importGrids());
+    }
+    
+    // 导出网格按钮
+    const exportBtn = document.getElementById('exportGridsButton');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => this.exportGrids());
+    }
   }
   
   /**
@@ -518,6 +530,102 @@ class GridManager {
       // 默认设置为只读
       textarea.readOnly = true;
     });
+  }
+  /**
+   * 导出网格配置
+   */
+  exportGrids() {
+    if (this.grids.length === 0) {
+      alert('没有可导出的网格配置');
+      return;
+    }
+    
+    const jsonData = JSON.stringify(this.grids, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // 创建下载链接
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hexagon_grids.json';
+    document.body.appendChild(a);
+    a.click();
+    
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  }
+  
+  /**
+   * 导入网格配置
+   */
+  importGrids() {
+    // 创建一个临时的文件输入元素
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    
+    input.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // 检查文件类型
+      if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        alert('请选择JSON文件');
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          
+          if (!Array.isArray(importedData)) {
+            alert('导入的数据格式无效');
+            return;
+          }
+          
+          // 验证每个网格对象的格式
+          const validGrids = importedData.filter(grid => {
+            return grid && 
+                   typeof grid.name === 'string' && 
+                   typeof grid.latitude === 'number' && 
+                   typeof grid.longitude === 'number' &&
+                   typeof grid.areaRadius === 'number' &&
+                   typeof grid.gridRadius === 'number';
+          });
+          
+          if (validGrids.length === 0) {
+            alert('导入的数据中没有有效的网格配置');
+            return;
+          }
+          
+          // 确认导入
+          if (confirm(`将导入 ${validGrids.length} 个网格配置，是否继续？`)) {
+            // 合并网格配置
+            this.grids = [...validGrids, ...this.grids];
+            this.saveGridsToLocalStorage();
+            this.renderGrids();
+            alert('网格配置导入成功');
+          }
+        } catch (error) {
+          console.error('解析JSON失败:', error);
+          alert('文件解析失败，请确保是有效的JSON文件');
+        }
+      };
+      
+      reader.onerror = () => {
+        alert('读取文件失败');
+      };
+      
+      reader.readAsText(file);
+    });
+    
+    // 触发文件选择对话框
+    input.click();
   }
 }
 

@@ -42,9 +42,15 @@
   <div id="manageGridsModal" class="modal">
     <div class="modal-content hexagon-grid-modal">
       <div class="grid-header">
-        <button class="back-btn" id="closeGridsManageModal"><i class="fas fa-arrow-left"></i></button>
-        <h2 class="grid-title">HexagonGrid</h2>
-        <button id="addNewGrid" class="add-btn" title="添加新网格"><i class="fas fa-plus"></i></button>
+        <div class="header-left">
+          <button class="back-btn" id="closeGridsManageModal"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="grid-title">HexagonGrid</h2>
+        </div>
+        <div class="header-right">
+          <button id="importGridsButton" class="action-btn" title="导入网格"><i class="fas fa-arrow-down"></i></button>
+          <button id="exportGridsButton" class="action-btn" title="导出网格"><i class="fas fa-arrow-up"></i></button>
+          <button id="addNewGrid" class="add-btn" title="添加新网格"><i class="fas fa-plus"></i></button>
+        </div>
       </div>
       
       <div id="gridsContainer" class="grids-container">
@@ -68,22 +74,21 @@
   
   <!-- 位置管理弹层 -->
   <div id="manageLocationsModal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" id="closeManageModal">&times;</button>
-      <h2>管理位置</h2>
-      
-      <div id="locationsTableContainer">
-        <!-- 这里将动态插入位置表格 -->
+    <div class="modal-content hexagon-grid-modal">
+      <div class="grid-header">
+        <div class="header-left">
+          <button class="back-btn" id="closeManageModal"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="grid-title">管理位置</h2>
+        </div>
+        <div class="header-right">
+          <button id="importButton" class="action-btn" title="导入位置"><i class="fas fa-arrow-down"></i></button>
+          <button id="exportButton" class="action-btn" title="导出位置"><i class="fas fa-arrow-up"></i></button>
+          <button id="addNewLocation" class="add-btn" title="添加新位置"><i class="fas fa-plus"></i></button>
+        </div>
       </div>
       
-      <div class="button-group">
-        <div>
-          <button id="addNewLocation">添加新位置</button>
-        </div>
-        <div class="actions">
-          <button id="importButton" class="secondary-btn">导入</button>
-          <button id="exportButton" class="secondary-btn">导出</button>
-        </div>
+      <div id="locationsContainer" class="grids-container">
+        <!-- 位置卡片将动态插入到这里 -->
       </div>
     </div>
   </div>

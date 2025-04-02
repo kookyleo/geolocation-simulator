@@ -21,7 +21,7 @@ class UIController {
     // 管理位置相关元素
     this.manageLocationsBtn = document.getElementById('manageLocations');
     this.manageLocationsModal = document.getElementById('manageLocationsModal');
-    this.locationsTableContainer = document.getElementById('locationsTableContainer');
+    this.locationsContainer = document.getElementById('locationsContainer');
     this.closeManageModalBtn = document.getElementById('closeManageModal');
     this.addNewLocationBtn = document.getElementById('addNewLocation');
     this.importButton = document.getElementById('importButton');
@@ -100,8 +100,7 @@ class UIController {
 
     // "管理位置"按钮点击事件
     this.manageLocationsBtn.addEventListener('click', () => {
-      this.renderLocationsTable();
-      this.manageLocationsModal.style.display = 'flex';
+      this.openLocationManager();
     });
 
     // 关闭管理位置模态框
@@ -122,8 +121,7 @@ class UIController {
 
     // "添加新位置"按钮点击事件
     this.addNewLocationBtn.addEventListener('click', () => {
-      this.manageLocationsModal.style.display = 'none';
-      this.openAddLocationModal();
+      this.createNewLocation();
     });
 
     // 编辑位置模态框的确认按钮
@@ -217,28 +215,63 @@ class UIController {
     // 保存位置
     if (this.currentEditIndex >= 0) {
       // 编辑现有位置
-      if (this.locationManager.editLocation(this.currentEditIndex, name, lat, lng)) {
-        this.editLocationModal.style.display = 'none';
-        this.renderLocationsTable();
+      const locationData = this.locationManager.getLocationForEdit(this.currentEditIndex);
+      if (locationData) {
+        locationData.name = name.trim();
+        locationData.latitude = lat;
+        locationData.longitude = lng;
+        
+        if (this.locationManager.editLocation(this.currentEditIndex, locationData)) {
+          this.editLocationModal.style.display = 'none';
+          this.renderLocations();
+        }
       }
     } else {
       // 添加新位置
       if (this.locationManager.saveCurrentLocation(name, lat, lng)) {
         this.editLocationModal.style.display = 'none';
-        this.renderLocationsTable();
+        this.renderLocations();
       }
     }
   }
 
   /**
-   * 渲染位置表格
+   * 打开位置管理器
    */
-  renderLocationsTable() {
-    const locations = this.locationManager.getSavedLocations();
+  openLocationManager() {
+    this.manageLocationsModal.style.display = 'flex';
+    this.renderLocations();
+  }
 
+  /**
+   * 关闭位置管理器
+   */
+  closeLocationManager() {
+    this.manageLocationsModal.style.display = 'none';
+  }
+
+  /**
+   * 创建新位置
+   */
+  createNewLocation() {
+    const newIndex = this.locationManager.createNewLocation(this.mapController);
+    this.renderLocations(newIndex);
+  }
+
+  /**
+   * 渲染位置卡片列表
+   * @param {number} newLocationIndex - 新创建的位置索引，用于高亮显示
+   */
+  renderLocations(newLocationIndex = -1) {
+    const container = this.locationsContainer;
+    if (!container) return;
+    
+    container.innerHTML = '';
+    const locations = this.locationManager.getSavedLocations();
+    
     if (locations.length === 0) {
       // 显示空状态
-      this.locationsTableContainer.innerHTML = `
+      container.innerHTML = `
         <div class="empty-state">
           <p>您还没有保存任何位置</p>
           <button id="addFirstLocation" class="save">添加第一个位置</button>
@@ -247,65 +280,238 @@ class UIController {
 
       // 添加第一个位置按钮点击事件
       document.getElementById('addFirstLocation').addEventListener('click', () => {
-        this.manageLocationsModal.style.display = 'none';
-        this.openAddLocationModal();
+        this.createNewLocation();
       });
 
       return;
     }
-
-    // 创建表格
-    let tableHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>名称</th>
-            <th>纬度</th>
-            <th>经度</th>
-            <th>保存时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    // 添加位置行
+    
+    // 导入JSON5支持模块
+    import('../js/json5-support.js').then(({ createJSON5Editor }) => {
+      locations.forEach((location, index) => {
+        // 创建卡片结构
+        const card = document.createElement('div');
+        card.className = 'grid-card' + (index === newLocationIndex ? ' new' : '');
+        card.dataset.index = index;
+        
+        // 创建按钮区域
+        const buttons = document.createElement('div');
+        buttons.className = 'grid-card-buttons';
+        buttons.innerHTML = `
+          <div class="switch-group">
+            <span class="label-text">使用</span>
+            <input type="checkbox" class="location-switch" id="location-switch-${index}" ${location.enabled ? 'checked' : ''}>
+          </div>
+          <div class="action-group">
+            <button class="edit-btn" title="编辑位置"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn" title="删除位置"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
+        
+        // 创建编辑器容器
+        const editorContainer = document.createElement('div');
+        editorContainer.className = 'json-editor-container grid-card-content';
+        editorContainer.style.minHeight = '150px';
+        editorContainer.style.overflow = 'visible';
+        editorContainer.style.position = 'relative';
+        editorContainer.style.flex = '1';
+        
+        // 添加到卡片
+        card.appendChild(buttons);
+        card.appendChild(editorContainer);
+        container.appendChild(card);
+        
+        // 绑定按钮事件
+        const locationSwitch = buttons.querySelector('.location-switch');
+        const labelText = buttons.querySelector('.label-text');
+        const editBtn = buttons.querySelector('.edit-btn');
+        const deleteBtn = buttons.querySelector('.delete-btn');
+        
+        // 为label文本添加点击事件，模拟label功能
+        labelText.addEventListener('click', () => {
+          locationSwitch.click();
+        });
+        
+        // 切换位置启用状态
+        locationSwitch.addEventListener('change', () => {
+          const isEnabled = locationSwitch.checked;
+          const locationData = this.locationManager.getLocationForEdit(index);
+          if (locationData) {
+            locationData.enabled = isEnabled;
+            this.locationManager.editLocation(index, locationData);
+            
+            if (isEnabled) {
+              const location = this.locationManager.useLocation(index);
+              if (location) {
+                this.mapController.setMapLocation(location.latitude, location.longitude);
+              }
+            }
+          }
+        });
+        
+        // 删除按钮事件
+        deleteBtn.addEventListener('click', () => {
+          if (confirm('确定要删除这个位置吗？')) {
+            if (this.locationManager.deleteLocation(index)) {
+              this.renderLocations();
+            }
+          }
+        });
+        
+        // 初始化编辑器
+        window.monacoHelpers.waitForMonaco().then(() => {
+          // 创建 JSON5 编辑器
+          const json5Editor = createJSON5Editor(editorContainer, {
+            value: JSON.stringify(location, null, 2),
+            readOnly: true,
+            fontSize: 12,
+            minimap: { enabled: false },
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false
+          });
+          
+          // 绑定编辑按钮事件
+          editBtn.addEventListener('click', () => {
+            // 切换编辑状态
+            const isEditing = editBtn.classList.contains('editing');
+            const cardContent = editorContainer.closest('.grid-card-content');
+            if (isEditing) {
+              // 保存编辑
+              try {
+                const updatedLocation = JSON.parse(json5Editor.getValue());
+                if (this.locationManager.editLocation(index, updatedLocation)) {
+                  editBtn.classList.remove('editing');
+                  cardContent?.classList.remove('editing');
+                  editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                  editBtn.title = '编辑位置';
+                  json5Editor.editor?.updateOptions?.({ readOnly: true });
+                }
+              } catch (error) {
+                console.error('解析JSON失败:', error);
+                alert('位置数据格式无效，请检查后重试');
+              }
+            } else {
+              // 进入编辑模式
+              editBtn.classList.add('editing');
+              cardContent?.classList.add('editing');
+              editBtn.innerHTML = '<i class="fas fa-save"></i>';
+              editBtn.title = '保存位置';
+              json5Editor.editor?.updateOptions?.({ readOnly: false });
+            }
+          });
+          
+          // 使用位置（双击编辑器区域）
+          editorContainer.addEventListener('dblclick', () => {
+            if (!editBtn.classList.contains('editing')) {
+              const location = this.locationManager.useLocation(index);
+              if (location) {
+                this.mapController.setMapLocation(location.latitude, location.longitude);
+                this.closeLocationManager();
+              }
+            }
+          });
+        }).catch(error => {
+          console.error('Monaco 编辑器加载失败:', error);
+          
+          // 如果 Monaco 加载失败，使用普通文本区域作为后备
+          const textarea = document.createElement('textarea');
+          textarea.className = 'json-editor';
+          textarea.value = JSON.stringify(location, null, 2);
+          textarea.style.minHeight = '150px';
+          textarea.style.fontFamily = 'monospace';
+          textarea.style.padding = '8px';
+          textarea.style.boxSizing = 'border-box';
+          textarea.readOnly = true;
+          
+          editorContainer.appendChild(textarea);
+          
+          // 绑定编辑按钮事件
+          editBtn.addEventListener('click', () => {
+            // 切换编辑状态
+            const isEditing = editBtn.classList.contains('editing');
+            const cardContent = editorContainer.closest('.grid-card-content');
+            if (isEditing) {
+              // 保存编辑
+              try {
+                const updatedLocation = JSON.parse(textarea.value);
+                if (this.locationManager.editLocation(index, updatedLocation)) {
+                  editBtn.classList.remove('editing');
+                  cardContent?.classList.remove('editing');
+                  editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                  editBtn.title = '编辑位置';
+                  textarea.readOnly = true;
+                }
+              } catch (error) {
+                console.error('解析JSON失败:', error);
+                alert('位置数据格式无效，请检查后重试');
+              }
+            } else {
+              // 进入编辑模式
+              editBtn.classList.add('editing');
+              cardContent?.classList.add('editing');
+              editBtn.innerHTML = '<i class="fas fa-save"></i>';
+              editBtn.title = '保存位置';
+              textarea.readOnly = false;
+            }
+          });
+          
+          // 使用位置（双击文本区域）
+          textarea.addEventListener('dblclick', () => {
+            if (textarea.readOnly) {
+              const location = this.locationManager.useLocation(index);
+              if (location) {
+                this.mapController.setMapLocation(location.latitude, location.longitude);
+                this.closeLocationManager();
+              }
+            }
+          });
+        });
+      });
+    }).catch(error => {
+      console.error('JSON5 支持模块加载失败:', error);
+      this.renderFallbackLocations();
+    });
+  }
+  
+  /**
+   * 渲染位置的后备显示方式（当JSON5编辑器加载失败时）
+   */
+  renderFallbackLocations() {
+    const locations = this.locationManager.getSavedLocations();
+    let html = '';
+    
     locations.forEach((location, index) => {
       const date = new Date(location.timestamp);
       const formattedDate = date.toLocaleString();
-
-      tableHTML += `
-        <tr>
-          <td>${location.name}</td>
-          <td>${location.latitude.toFixed(6)}</td>
-          <td>${location.longitude.toFixed(6)}</td>
-          <td>${formattedDate}</td>
-          <td class="actions">
-            <button class="use-location" data-index="${index}">使用</button>
-            <button class="edit-location" data-index="${index}">编辑</button>
-            <button class="delete-location btn-delete" data-index="${index}">删除</button>
-          </td>
-        </tr>
+      
+      html += `
+        <div class="grid-card" data-index="${index}">
+          <div class="grid-card-header">
+            <h3>${location.name}</h3>
+            <button class="grid-card-delete" data-index="${index}" title="删除位置"><i class="fas fa-trash"></i></button>
+          </div>
+          <div class="grid-card-content">
+            <div class="grid-field"><span>纬度:</span> ${location.latitude}</div>
+            <div class="grid-field"><span>经度:</span> ${location.longitude}</div>
+            <div class="grid-field"><span>保存时间:</span> ${formattedDate}</div>
+            <div class="grid-card-actions">
+              <button class="grid-btn use-location" data-index="${index}" title="使用位置"><i class="fas fa-map-marker-alt"></i> 使用</button>
+              <button class="grid-btn edit-location" data-index="${index}" title="编辑位置"><i class="fas fa-edit"></i> 编辑</button>
+            </div>
+          </div>
+        </div>
       `;
     });
-
-    tableHTML += `
-        </tbody>
-      </table>
-    `;
-
-    // 更新表格容器
-    this.locationsTableContainer.innerHTML = tableHTML;
-
-    // 添加按钮事件监听器
-    this._setupTableButtonListeners();
+    
+    this.locationsContainer.innerHTML = html;
+    this._setupFallbackButtonListeners();
   }
 
   /**
-   * 设置表格按钮事件监听器
+   * 设置后备显示方式的按钮事件监听器
    * @private
    */
-  _setupTableButtonListeners() {
+  _setupFallbackButtonListeners() {
     // 使用位置按钮
     const useButtons = document.querySelectorAll('.use-location');
     useButtons.forEach(button => {
@@ -314,7 +520,7 @@ class UIController {
         const location = this.locationManager.useLocation(index);
         if (location) {
           this.mapController.setMapLocation(location.latitude, location.longitude);
-          this.manageLocationsModal.style.display = 'none';
+          this.closeLocationManager();
         }
       });
     });
@@ -329,13 +535,13 @@ class UIController {
     });
 
     // 删除位置按钮
-    const deleteButtons = document.querySelectorAll('.delete-location');
+    const deleteButtons = document.querySelectorAll('.grid-card-delete');
     deleteButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
         if (confirm('确定要删除这个位置吗？')) {
           if (this.locationManager.deleteLocation(index)) {
-            this.renderLocationsTable();
+            this.renderLocations();
           }
         }
       });
