@@ -180,22 +180,17 @@ html {
 
 .grid-header {
     background-color: var(--ds-surface, #FFFFFF);
-    border-bottom: 1px solid var(--ds-border, #DFE1E6);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
+    border-bottom: 1px solid var(--ds-border, #DFE1E6)
 }
 
-.header-left {
+.header-left,
+.header-right {
     display: flex;
-    align-items: center;
+    align-items: center
 }
 
 .header-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 8px
 }
 
 .back-btn {
@@ -284,10 +279,12 @@ html {
     right: 4px;
     z-index: 10;
     background-color: var(--ds-surface-raised, #FFFFFF);
-    border: 1px solid var(--ds-surface-sunken, #F4F5F7);
+    border: 1px solid var(--ds-surface-sunken, #F4F5F7)
 }
 
-.grid-card-buttons .action-group {
+.card-header-actions,
+.grid-card-buttons .action-group,
+.grid-card-buttons .switch-group {
     display: flex;
     align-items: center;
     gap: 2px
@@ -319,34 +316,27 @@ html {
     background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08))
 }
 
+.grid-card-buttons .label-text,
 .grid-card-buttons label {
     color: var(--ds-text, #172B4D);
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 16px;
     display: flex;
     align-items: center
+}
+
+.grid-card-buttons label {
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 16px
 }
 
 .card-header-actions {
-    display: flex;
-    gap: 4px;
-    align-items: center
-}
-
-.grid-card-buttons .switch-group {
-    display: flex;
-    align-items: center;
-    gap: 2px;
+    gap: 4px
 }
 
 .grid-card-buttons .label-text {
-    color: var(--ds-text, #172B4D);
     font-size: 12px;
     line-height: 24px;
     height: 24px;
-    display: flex;
-    align-items: center;
     user-select: none;
     padding-left: 4px
 }
@@ -456,9 +446,6 @@ html {
 }
 
 .grid-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 8px;
     position: relative
 }
@@ -517,7 +504,8 @@ html {
     padding: 0
 }
 
-.grid-btn:hover {
+.grid-btn:hover,
+.modal-content .button-group button.cancel:hover {
     background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08));
     color: var(--ds-text, #172B4D)
 }
@@ -608,7 +596,7 @@ html {
 }
 
 .modal-content input {
-    box-sizing: border-box;
+    box-sizing: border-box
 }
 
 .modal-content .button-group {
@@ -636,11 +624,6 @@ html {
     color: var(--ds-text-subtle, #42526E)
 }
 
-.modal-content .button-group button.cancel:hover {
-    background-color: var(--ds-background-neutral-hovered, rgba(9, 30, 66, 0.08));
-    color: var(--ds-text, #172B4D)
-}
-
 .modal-content .button-group button.save {
     background-color: var(--ds-background-brand-bold, #0052CC);
     color: var(--ds-text-inverse, #FFFFFF);
@@ -663,7 +646,7 @@ html {
     border: 0;
     color: #fff;
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.5
 }
 
 #manageLocationsModal .modal-content {
@@ -677,7 +660,8 @@ html {
     border-radius: 0
 }
 
-#manageLocationsModal h2 {
+#manageLocationsModal h2,
+.grid-header h2 {
     color: #1a73e8;
     margin-top: 0
 }
@@ -837,9 +821,7 @@ html {
     height: auto
 }
 
-/* 保存位置弹窗特定样式 */
 #saveLocationModal .modal-content {
-    height: auto;
     min-height: auto;
     padding-bottom: 12px;
     max-height: none
@@ -1105,15 +1087,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    transition: background-color .2s
-}
-
-.close-btn:hover,
-.grid-header .close-btn:hover {
-    background-color: rgba(255, 255, 255, .1)
+    border-radius: 50%
 }
 
 .close-btn {
@@ -1124,6 +1098,17 @@ html {
     width: 40px;
     height: 40px;
     transition: background-color .2s ease
+}
+
+.grid-header .close-btn {
+    width: 36px;
+    height: 36px;
+    transition: background-color .2s
+}
+
+.close-btn:hover,
+.grid-header .close-btn:hover {
+    background-color: rgba(255, 255, 255, .1)
 }
 
 .grids-container {
@@ -1183,21 +1168,21 @@ html {
 }
 
 .action-btn {
-    background: transparent;
+    background: 0 0;
     border: 0;
     font-size: 16px;
-    color: #42526E;
+    color: #42526e;
     cursor: pointer;
     padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 3px;
-    transition: background-color 0.2s;
+    transition: background-color .2s
 }
 
 .action-btn:hover {
-    background-color: rgba(9, 30, 66, 0.08);
+    background-color: rgba(9, 30, 66, .08)
 }
 
 .CodeMirror {

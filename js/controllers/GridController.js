@@ -317,6 +317,24 @@ class GridController {
     
     container.innerHTML = '';
     
+    // 检查是否有网格配置
+    if (this.grids.length === 0) {
+      // 显示空状态
+      container.innerHTML = `
+        <div class="empty-state">
+          <p>You have no saved grid configurations</p>
+          <button id="addFirstGrid" class="save">Add first grid</button>
+        </div>
+      `;
+
+      // 添加第一个网格按钮点击事件
+      document.getElementById('addFirstGrid').addEventListener('click', () => {
+        this.createNewGrid();
+      });
+
+      return;
+    }
+    
     // 导入JSON5支持模块
     import('../editor/json5-support.js').then(({ createJSON5Editor }) => {
       this.grids.forEach((grid, index) => {
