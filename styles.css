@@ -47,7 +47,6 @@ html {
     border-radius: 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .65);
     transition: all .3s ease;
-    max-width: 250px;
     transform-origin: bottom left
 }
 

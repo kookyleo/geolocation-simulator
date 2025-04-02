@@ -24,7 +24,7 @@ class LocationManager {
         this.updateSavedLocationsDropdown();
       }
     } catch (error) {
-      console.error('加载位置失败:', error);
+      console.error('Failed to load saved locations:', error);
       this.savedLocations = [];
     }
   }
@@ -34,13 +34,13 @@ class LocationManager {
    * @private
    * @param {string} message - 日志消息
    */
-  _saveToStorage(message = '位置已更新') {
+  _saveToStorage(message = 'Locations updated') {
     try {
       localStorage.setItem('savedLocations', JSON.stringify(this.savedLocations));
       console.log(message);
       this.updateSavedLocationsDropdown();
     } catch (error) {
-      console.error('保存位置失败:', error);
+      console.error('Failed to save locations:', error);
     }
   }
 
@@ -49,8 +49,8 @@ class LocationManager {
    */
   updateSavedLocationsDropdown() {
     // 清空下拉列表，保留默认选项和当前物理位置选项
-    const defaultOption = '<option value="">选择保存的位置</option>';
-    const physicalLocationOption = '<option value="current-physical-location" class="physical-location-option">当前物理位置</option>';
+    const defaultOption = '<option value="">Select saved location</option>';
+    const physicalLocationOption = '<option value="current-physical-location" class="physical-location-option">Current Physical Location</option>';
     const separator = '<option disabled="disabled">.................</option>';
 
     // 设置基本选项
@@ -77,7 +77,7 @@ class LocationManager {
    */
   saveCurrentLocation(name, lat, lng) {
     if (!name || name.trim() === '') {
-      alert('请输入位置名称');
+      alert('Please enter a location name');
       return false;
     }
     
@@ -88,11 +88,11 @@ class LocationManager {
       timestamp: new Date().toISOString()
     };
     
-    // 将新位置添加到数组开头
+    // Add new location to the beginning of the array
     this.savedLocations.unshift(newLocation);
     
-    // 保存到本地存储
-    this._saveToStorage('位置已保存');
+    // Save to local storage
+    this._saveToStorage('Location saved');
     
     return true;
   }
@@ -147,15 +147,15 @@ class LocationManager {
     }
     
     const newLocation = {
-      name: `位置 ${this.savedLocations.length + 1}`,
+      name: `Location ${this.savedLocations.length + 1}`,
       latitude: position.lat,
       longitude: position.lng,
       timestamp: new Date().toISOString()
     };
     
-    // 将新位置添加到数组开头
+    // Add new location to the beginning of the array
     this.savedLocations.unshift(newLocation);
-    this._saveToStorage('新位置已创建');
+    this._saveToStorage('New location created');
     
     return 0; // 返回新位置的索引（始终是0，因为添加到了数组开头）
   }
@@ -177,22 +177,22 @@ class LocationManager {
       
       // 确保更新后的位置对象有必要的字段
       if (!updatedLocation.name || typeof updatedLocation.latitude !== 'number' || typeof updatedLocation.longitude !== 'number') {
-        console.error('位置数据格式无效');
+        console.error('Invalid location data format');
         return false;
       }
       
-      // 更新位置，保留时间戳
+      // Update location, keep the timestamp
       this.savedLocations[index] = {
         ...updatedLocation,
         timestamp: originalTimestamp
       };
       
-      // 保存到本地存储
-      this._saveToStorage('位置已更新');
+      // Save to local storage
+      this._saveToStorage('Location updated');
       
       return true;
     } catch (error) {
-      console.error('编辑位置失败:', error);
+      console.error('Failed to edit location:', error);
       return false;
     }
   }
@@ -209,8 +209,8 @@ class LocationManager {
     
     this.savedLocations.splice(index, 1);
     
-    // 保存到本地存储
-    this._saveToStorage('位置已删除');
+    // Save to local storage
+    this._saveToStorage('Location deleted');
     
     return true;
   }
@@ -233,11 +233,11 @@ class LocationManager {
       const importedData = JSON.parse(jsonData);
       
       if (!Array.isArray(importedData)) {
-        alert('导入的数据格式无效');
+        alert('Invalid imported data format');
         return false;
       }
       
-      // 验证每个位置对象的格式
+      // Validate each location object format
       const validLocations = importedData.filter(location => {
         return location && 
                typeof location.name === 'string' && 
@@ -246,28 +246,28 @@ class LocationManager {
       });
       
       if (validLocations.length === 0) {
-        alert('导入的数据中没有有效的位置');
+        alert('No valid locations found in imported data');
         return false;
       }
       
-      // 确认是合并还是替换
-      const shouldMerge = confirm(`成功解析 ${validLocations.length} 个位置。\n是否合并到现有位置？\n点击"确定"合并，点击"取消"替换现有位置。`);
+      // Confirm merge or replace
+      const shouldMerge = confirm(`Successfully parsed ${validLocations.length} locations.\nMerge with existing locations?\nClick "OK" to merge, "Cancel" to replace existing locations.`);
       
       if (shouldMerge) {
-        // 合并位置
+        // Merge locations
         this.savedLocations = [...this.savedLocations, ...validLocations];
       } else {
-        // 替换位置
+        // Replace locations
         this.savedLocations = validLocations;
       }
       
-      // 保存到本地存储
-      this._saveToStorage('位置已导入');
+      // Save to local storage
+      this._saveToStorage('Locations imported');
       
       return true;
     } catch (error) {
-      console.error('导入位置时出错:', error);
-      alert('导入位置时出错: ' + error.message);
+      console.error('Error importing locations:', error);
+      alert('Error importing locations: ' + error.message);
       return false;
     }
   }

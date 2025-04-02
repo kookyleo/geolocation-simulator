@@ -62,7 +62,7 @@ class GridManager {
         this.updateGridDisplay();
       }
     } catch (error) {
-      console.error('加载网格配置失败:', error);
+      console.error('Failed to load grid configuration:', error);
       this.grids = [];
     }
   }
@@ -76,7 +76,7 @@ class GridManager {
       // 触发网格更新
       this.updateGridDisplay();
     } catch (error) {
-      console.error('保存网格配置失败:', error);
+      console.error('Failed to save grid configuration:', error);
     }
   }
 
@@ -127,7 +127,7 @@ class GridManager {
     }
     
     const newGrid = {
-      name: `网格 ${this.grids.length + 1}`,
+      name: `Grid ${this.grids.length + 1}`,
       latitude: centerLat,
       longitude: centerLng,
       areaRadius: 5000,
@@ -165,7 +165,7 @@ class GridManager {
         // 重新渲染网格列表
         this.renderGrids();
         
-        console.log(`已删除网格配置，当前剩余 ${this.grids.length} 个网格`);
+        console.log(`Grid configuration deleted, ${this.grids.length} grids remaining`);
       }
     }
   }
@@ -204,7 +204,7 @@ class GridManager {
         // 显示网格
         this.hexagonGridLayer.showGrid();
         
-        console.log(`已应用网格配置: ${grid.name}`);
+        console.log(`Grid configuration applied: ${grid.name}`);
       }
     }
   }
@@ -236,13 +236,13 @@ class GridManager {
       card.innerHTML = `
         <div class="grid-card-header">
           <h3>${grid.name}</h3>
-          <button class="grid-card-delete" title="删除网格"><i class="fas fa-trash"></i></button>
+          <button class="grid-card-delete" title="Delete Grid"><i class="fas fa-trash"></i></button>
         </div>
         <div class="grid-card-content">
           <textarea class="grid-json-editor">${JSON.stringify(grid, null, 2)}</textarea>
           <div class="grid-card-actions">
-            <button class="grid-btn grid-card-edit" title="完成编辑"><i class="fas fa-check"></i> 完成</button>
-            <button class="grid-btn grid-card-apply" title="应用到地图"><i class="fas fa-map-marker-alt"></i> 应用</button>
+            <button class="grid-btn grid-card-edit" title="Complete Edit"><i class="fas fa-check"></i> Complete</button>
+            <button class="grid-btn grid-card-apply" title="Apply to Map"><i class="fas fa-map-marker-alt"></i> Apply</button>
           </div>
         </div>
       `;
@@ -255,17 +255,17 @@ class GridManager {
       card.innerHTML = `
         <div class="grid-card-header">
           <h3>${grid.name}</h3>
-          <button class="grid-card-delete" title="删除网格"><i class="fas fa-trash"></i></button>
+          <button class="grid-card-delete" title="Delete Grid"><i class="fas fa-trash"></i></button>
         </div>
         <div class="grid-card-content">
-          <div class="grid-field"><span>纬度:</span> ${grid.latitude}</div>
-          <div class="grid-field"><span>经度:</span> ${grid.longitude}</div>
-          <div class="grid-field"><span>区域半径:</span> ${grid.areaRadius}米</div>
-          <div class="grid-field"><span>网格半径:</span> ${grid.gridRadius}米</div>
+          <div class="grid-field"><span>Latitude:</span> ${grid.latitude}</div>
+          <div class="grid-field"><span>Longitude:</span> ${grid.longitude}</div>
+          <div class="grid-field"><span>Area Radius:</span> ${grid.areaRadius}m</div>
+          <div class="grid-field"><span>Grid Radius:</span> ${grid.gridRadius}m</div>
           ${mergeAreasDisplay}
           <div class="grid-card-actions">
-            <button class="grid-btn grid-card-edit" title="编辑网格"><i class="fas fa-edit"></i> 编辑</button>
-            <button class="grid-btn grid-card-apply" title="应用到地图"><i class="fas fa-map-marker-alt"></i> 应用</button>
+            <button class="grid-btn grid-card-edit" title="Edit Grid"><i class="fas fa-edit"></i> Edit</button>
+            <button class="grid-btn grid-card-apply" title="Apply to Map"><i class="fas fa-map-marker-alt"></i> Apply</button>
           </div>
         </div>
       `;
@@ -334,8 +334,8 @@ class GridManager {
             <input type="checkbox" class="grid-switch" id="grid-switch-${index}" ${grid.enabled ? 'checked' : ''}>
           </div>
           <div class="action-group">
-            <button class="edit-btn" title="编辑网格"><i class="fas fa-edit"></i></button>
-            <button class="delete-btn" title="删除网格"><i class="fas fa-trash-alt"></i></button>
+            <button class="edit-btn" title="Edit Grid"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn" title="Delete Grid"><i class="fas fa-trash-alt"></i></button>
           </div>
         `;
         
@@ -422,22 +422,22 @@ class GridManager {
                 editBtn.classList.remove('editing');
                 cardContent?.classList.remove('editing');
                 editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                editBtn.title = '编辑网格';
+                editBtn.title = 'Edit Grid';
                 json5Editor.editor?.updateOptions?.({ readOnly: true });
               } catch (error) {
-                console.error('解析JSON失败:', error);
+                console.error('Failed to parse JSON:', error);
               }
             } else {
-              // 进入编辑模式
+              // Enter edit mode
               editBtn.classList.add('editing');
               cardContent?.classList.add('editing');
               editBtn.innerHTML = '<i class="fas fa-save"></i>';
-              editBtn.title = '保存网格';
+              editBtn.title = 'Save Grid';
               json5Editor.editor?.updateOptions?.({ readOnly: false });
             }
           });
         }).catch(error => {
-          console.error('Monaco 编辑器加载失败:', error);
+          console.error('Monaco editor failed to load:', error);
           
           // 如果 Monaco 加载失败，使用普通文本区域作为后备
           const textarea = document.createElement('textarea');
@@ -466,7 +466,7 @@ class GridManager {
                 editBtn.classList.remove('editing');
                 cardContent?.classList.remove('editing');
                 editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                editBtn.title = '编辑网格';
+                editBtn.title = 'Edit Grid';
                 textarea.readOnly = true;
               } catch (error) {
                 console.error('解析JSON失败:', error);
@@ -476,7 +476,7 @@ class GridManager {
               editBtn.classList.add('editing');
               cardContent?.classList.add('editing');
               editBtn.innerHTML = '<i class="fas fa-save"></i>';
-              editBtn.title = '保存网格';
+              editBtn.title = 'Save Grid';
               textarea.readOnly = false;
             }
           });
@@ -511,7 +511,7 @@ class GridManager {
             <input type="checkbox" class="grid-switch" ${grid.enabled ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
-          <span class="switch-label">${grid.enabled ? '启用' : '禁用'}</span>
+          <span class="switch-label">${grid.enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
         <button class="edit-btn">edit</button>
         <button class="delete-btn">delete</button>
@@ -613,7 +613,7 @@ class GridManager {
    */
   exportGrids() {
     if (this.grids.length === 0) {
-      alert('没有可导出的网格配置');
+      alert('No grid configurations available for export');
       return;
     }
     
@@ -650,7 +650,7 @@ class GridManager {
       
       // 检查文件类型
       if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-        alert('请选择JSON文件');
+        alert('Please select a JSON file');
         return;
       }
       
@@ -661,11 +661,11 @@ class GridManager {
           const importedData = JSON.parse(e.target.result);
           
           if (!Array.isArray(importedData)) {
-            alert('导入的数据格式无效');
+            alert('Invalid imported data format');
             return;
           }
           
-          // 验证每个网格对象的格式
+          // Validate each grid object format
           const validGrids = importedData.filter(grid => {
             return grid && 
                    typeof grid.name === 'string' && 
@@ -676,26 +676,26 @@ class GridManager {
           });
           
           if (validGrids.length === 0) {
-            alert('导入的数据中没有有效的网格配置');
+            alert('No valid grid configurations found in imported data');
             return;
           }
           
-          // 确认导入
-          if (confirm(`将导入 ${validGrids.length} 个网格配置，是否继续？`)) {
-            // 合并网格配置
+          // Confirm import
+          if (confirm(`Import ${validGrids.length} grid configurations. Continue?`)) {
+            // Merge grid configurations
             this.grids = [...validGrids, ...this.grids];
             this.saveGridsToLocalStorage();
             this.renderGrids();
-            alert('网格配置导入成功');
+            alert('Grid configurations imported successfully');
           }
         } catch (error) {
-          console.error('解析JSON失败:', error);
-          alert('文件解析失败，请确保是有效的JSON文件');
+          console.error('Failed to parse JSON:', error);
+          alert('Failed to parse file. Please ensure it is a valid JSON file');
         }
       };
       
       reader.onerror = () => {
-        alert('读取文件失败');
+        alert('Failed to read file');
       };
       
       reader.readAsText(file);

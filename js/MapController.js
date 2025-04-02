@@ -14,12 +14,6 @@ class MapController {
     this.lngElement = document.getElementById('lng');
   }
 
-  /**
-   * 初始化地图this.map = L.map('map', {
-     scrollWheelZoom: true,  // 启用滚轮缩放，这也支持触摸板缩放
-     wheelPxPerZoomLevel: 120  // 调整触摸板缩放的灵敏度
-   }).setView(initialPosition, 13);
-   */
   initMap() {
     // 默认位置：旧金山
     const initialPosition = [37.7749, -122.4194];
@@ -80,15 +74,15 @@ class MapController {
     layerControl.onAdd = () => {
       const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-layer-control');
       
-      // 创建地图图层选择器，垂直排列
+      // Create map layer selector, vertical layout
       container.innerHTML = `
         <div class="map-layer-buttons">
-          <a href="#" id="streetMapBtn" class="map-layer-btn active" title="街道地图"><i class="fas fa-road"></i></a>
-          <a href="#" id="satelliteMapBtn" class="map-layer-btn" title="卫星影像"><i class="fas fa-satellite"></i></a>
+          <a href="#" id="streetMapBtn" class="map-layer-btn active" title="Street Map"><i class="fas fa-road"></i></a>
+          <a href="#" id="satelliteMapBtn" class="map-layer-btn" title="Satellite Image"><i class="fas fa-satellite"></i></a>
         </div>
       `;
       
-      // 防止点击事件传播到地图
+      // Prevent click events from propagating to the map
       L.DomEvent.disableClickPropagation(container);
       
       return container;
@@ -205,14 +199,14 @@ class MapController {
   }
 
   /**
-   * 更新地理位置
-   * @param {number} lat - 纬度
-   * @param {number} lng - 经度
+   * Update geolocation
+   * @param {number} lat - Latitude
+   * @param {number} lng - Longitude
    */
   updateGeolocation(lat, lng) {
-    console.log(`模拟位置更新为: 纬度 ${lat}, 经度 ${lng}`);
+    console.log(`Updating mock location: Latitude ${lat}, Longitude ${lng}`);
     
-    // 更新UI显示
+    // Update UI display
     this.latElement.textContent = lat.toFixed(6);
     this.lngElement.textContent = lng.toFixed(6);
     
@@ -234,9 +228,9 @@ class MapController {
       position: mockPosition
     }, (response) => {
       if (response && response.success) {
-        console.log('位置更新消息已发送到后台脚本');
+        console.log('Location update message sent to background script');
       } else {
-        console.error('位置更新消息发送失败:', response?.error || '未知错误');
+        console.error('Location update message send failed:', response?.error || 'Unknown error');
       }
     });
   }
@@ -248,20 +242,20 @@ class MapController {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs.length > 0) {
         const activeTab = tabs[0];
-        console.log(`连接到标签页: ${activeTab.id}`);
+        console.log(`Connecting to tab: ${activeTab.id}`);
         
         chrome.runtime.sendMessage({
           action: 'connectToTab',
           tabId: activeTab.id
         }, (response) => {
           if (response && response.success) {
-            console.log(`成功连接到标签页 ${activeTab.id} 的调试器`);
+            console.log(`Successfully connected to tab ${activeTab.id} debugger`);
           } else {
-            console.error(`连接到标签页 ${activeTab.id} 的调试器失败:`, response?.error || '未知错误');
+            console.error(`Failed to connect to tab ${activeTab.id} debugger:`, response?.error || 'Unknown error');
           }
         });
       } else {
-        console.error('无法获取活动标签页');
+        console.error('Unable to get active tab');
       }
     });
   }
@@ -308,7 +302,7 @@ class MapController {
         // 成功回调
         (position) => {
           const { latitude, longitude } = position.coords;
-          console.log(`获取到真实 GPS 位置: 纬度 ${latitude}, 经度 ${longitude}`);
+          console.log(`Fetching real GPS location: Latitude ${latitude}, Longitude ${longitude}`);
           
           // 恢复按钮图标
           if (locationButton) {
@@ -332,13 +326,13 @@ class MapController {
           }).addTo(this.map);
           
           // 添加气泡提示
-          this.realPositionMarker.bindPopup('<strong>当前真实位置</strong><br/>纬度: ' + latitude.toFixed(6) + '<br/>经度: ' + longitude.toFixed(6)).openPopup();
+          this.realPositionMarker.bindPopup('<strong>Current Real Location</strong><br/>Latitude: ' + latitude.toFixed(6) + '<br/>Longitude: ' + longitude.toFixed(6)).openPopup();
           
           // 将地图移动到真实位置
           this.map.setView([latitude, longitude], this.map.getZoom());
           
-          // 询问用户是否要将模拟位置设置为真实位置
-          if (confirm('是否将模拟位置设置为当前真实位置？')) {
+          // Ask user if they want to set the mock location to the current real location
+          if (confirm('Do you want to set the mock location to the current real location?')) {
             // 更新模拟位置标记（信标）的位置
             this.marker.setLatLng([latitude, longitude]);
             
@@ -348,7 +342,7 @@ class MapController {
         },
         // 错误回调
         (error) => {
-          console.error('获取位置失败:', error.message, error.code);
+          console.error('Failed to get location:', error.message, error.code);
           
           // 恢复按钮图标
           if (locationButton) {
@@ -359,16 +353,16 @@ class MapController {
           let errorMsg = '';
           switch(error.code) {
             case error.PERMISSION_DENIED:
-              errorMsg = '您拒绝了位置请求权限。请在浏览器设置中允许位置访问权限并重试。';
+              errorMsg = 'You denied location permission. Please allow location access in your browser settings and try again.';
               break;
             case error.POSITION_UNAVAILABLE:
-              errorMsg = '当前无法获取位置信息。请确保您的设备已开启位置服务并处于可以获取GPS信号的环境。';
+              errorMsg = 'Unable to get location information. Please ensure your device is enabled and in a location where GPS signals are available.';
               break;
             case error.TIMEOUT:
-              errorMsg = '获取位置超时。请检查您的网络连接并重试。';
+              errorMsg = 'Unable to get location information. Please check your network connection and try again.';
               break;
             default:
-              errorMsg = `无法获取当前位置: ${error.message}`;
+              errorMsg = `Unable to get location information: ${error.message}`;
           }
           
           // 显示错误提示
@@ -376,7 +370,7 @@ class MapController {
           
           // 如果是权限问题，提供更多帮助
           if (error.code === error.PERMISSION_DENIED) {
-            console.info('提示用户如何开启位置权限');
+            console.info('Please allow location access in your browser settings and try again.');
           }
         },
         // 选项
@@ -387,12 +381,12 @@ class MapController {
         }
       );
     } else {
-      alert('您的浏览器不支持地理位置 API。请尝试使用现代浏览器，如Chrome、Firefox或Safari的最新版本。');
+      alert('Your browser does not support the Geolocation API. Please try using a modern browser, such as Chrome, Firefox, or Safari.');
     }
     
-    // 如果没有真实位置，使用默认位置作为回退方案
+    // If no real position, use default position as fallback
     if (!this.realPositionMarker) {
-      console.log('使用默认位置作为回退方案');
+      console.log('Using default position as fallback');
     }
   }
 }

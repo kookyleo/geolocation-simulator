@@ -142,7 +142,7 @@ class HexagonRenderer {
    */
   initializeHexagonEdges(hexagon) {
     if (!hexagon || !hexagon.polygon) {
-      console.error('六边形对象无效，无法初始化边');
+      console.error('Hexagon object invalid, cannot initialize edges');
       return;
     }
     
@@ -199,7 +199,7 @@ class HexagonRenderer {
    */
   recreateHexagonWithVisibleEdges(hexagon) {
     if (!hexagon || !hexagon.polygon || !hexagon.edgeInfo) {
-      console.error('六边形对象无效，无法更新边缘');
+      console.error('Hexagon object invalid, cannot update edges');
       return;
     }
     

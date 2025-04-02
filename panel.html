@@ -10,7 +10,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="lib/leaflet.css">
   <!-- Font Awesome 图标库 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="lib/fontawesome/font-awesome.all.min.6.4.css">
   <link rel="stylesheet" href="styles.css">
   <!-- 移除内联脚本，将其放入外部JS文件 -->
 </head>
@@ -18,64 +18,68 @@
 <body>
   <div id="map"></div>
   <div class="info-panel">
-    <p>拖动标记来设置模拟位置</p>
-    <div>纬度: <span id="lat">37.7749</span></div>
-    <div>经度: <span id="lng">-122.4194</span></div>
+    <p>Drag marker to set simulated location</p>
+    <div>Latitude: <span id="lat">37.7749</span></div>
+    <div>Longitude: <span id="lng">-122.4194</span></div>
     <p><small>
-        <b>快捷键：</b><br>
-        ↑↓←→ - 移动地图<br>
-        Cmd+方向键 - 微调标记位置<br>
-        Cmd+Shift+方向键 - 大幅调整标记位置
+        <b>Shortcuts:</b><br>
+        ↑↓←→ - Move map<br>
+        Cmd+Arrow keys - Fine-tune marker position<br>
+        Cmd+Shift+Arrow keys - Large adjustment of marker position
+      </small></p>
+      <p><small>
+        <b>GitHub:</b>
+        <a href="https://github.com/kookyleo/geolocation-simulator" target="_blank">geolocation</a>
       </small></p>
   </div>
 
-  <div class="location-toggle" title="显示当前真实位置"><i class="fas fa-location-arrow"></i></div>
+  <div class="location-toggle" title="Show current real location"><i class="fas fa-location-arrow"></i></div>
   <div class="info-toggle hidden">i</div>
 
   <div class="toolbar">
-    <select id="savedLocations" title="已保存的位置">
+    <select id="savedLocations" title="Saved locations">
     </select>
-    <button id="saveLocation" title="保存当前位置"><i class="fas fa-save"></i></button>
-    <button id="manageLocations" title="管理保存的位置"><i class="fas fa-list"></i></button>
-    <button id="manageGrids" title="管理六边形网格"><img src="images/bee.png" alt="bee"
+    <button id="saveLocation" title="Save current location"><i class="fas fa-save"></i></button>
+    <button id="manageLocations" title="Manage saved locations"><i class="fas fa-list"></i></button>
+    <button id="manageGrids" title="Manage hexagon grid"><img src="images/bee.png" alt="bee"
         style="width: 16px; height: 16px;"></button>
   </div>
 
-  <!-- 保存位置弹层 -->
+  <!-- Save location modal -->
   <div id="saveLocationModal" class="modal">
     <div class="modal-content">
       <button class="close-btn" id="closeSaveLocationModal">&times;</button>
-      <h3>保存位置</h3>
-      <input type="text" id="locationName" placeholder="输入位置名称">
+      <h3>Save Location</h3>
+      <input type="text" id="locationName" placeholder="Enter location name">
       <div class="button-group">
-        <button class="cancel" id="cancelSave">取消</button>
-        <button class="save" id="confirmSave">保存</button>
+        <button class="cancel" id="cancelSave">Cancel</button>
+        <button class="save" id="confirmSave">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- 位置管理弹层 -->
+  <!-- Location management modal -->
   <div id="manageLocationsModal" class="modal">
     <div class="modal-content hexagon-grid-modal">
       <div class="grid-header">
         <div class="header-left">
           <button class="back-btn" id="closeManageModal"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="grid-title">管理位置</h2>
+          <h2 class="grid-title">Manage Locations</h2>
         </div>
         <div class="header-right">
-          <button id="importButton" class="action-btn" title="导入位置"><i class="fas fa-arrow-down"></i></button>
-          <button id="exportButton" class="action-btn" title="导出位置"><i class="fas fa-arrow-up"></i></button>
-          <button id="addNewLocation" class="add-btn" title="添加新位置"><i class="fas fa-plus"></i></button>
+          <button id="importButton" class="action-btn" title="Import locations"><i class="fas fa-arrow-down"></i></button>
+          <button id="exportButton" class="action-btn" title="Export locations"><i class="fas fa-arrow-up"></i></button>
+          <button id="addNewLocation" class="add-btn" title="Add new location"><i class="fas fa-plus"></i></button>
         </div>
       </div>
 
       <div id="locationsContainer" class="grids-container">
-        <!-- 位置卡片将动态插入到这里 -->
+        <!-- Location cards will be dynamically inserted here -->
       </div>
     </div>
   </div>
 
-  <!-- 网格管理弹层 -->
+  <!-- Grid management modal -->
   <div id="manageGridsModal" class="modal">
     <div class="modal-content hexagon-grid-modal">
       <div class="grid-header">
@@ -84,14 +88,14 @@
           <h2 class="grid-title">HexagonGrid</h2>
         </div>
         <div class="header-right">
-          <button id="importGridsButton" class="action-btn" title="导入网格"><i class="fas fa-arrow-down"></i></button>
-          <button id="exportGridsButton" class="action-btn" title="导出网格"><i class="fas fa-arrow-up"></i></button>
-          <button id="addNewGrid" class="add-btn" title="添加新网格"><i class="fas fa-plus"></i></button>
+          <button id="importGridsButton" class="action-btn" title="Import grid"><i class="fas fa-arrow-down"></i></button>
+          <button id="exportGridsButton" class="action-btn" title="Export grid"><i class="fas fa-arrow-up"></i></button>
+          <button id="addNewGrid" class="add-btn" title="Add new grid"><i class="fas fa-plus"></i></button>
         </div>
       </div>
 
       <div id="gridsContainer" class="grids-container">
-        <!-- 网格卡片将动态插入到这里 -->
+        <!-- Grid cards will be dynamically inserted here -->
       </div>
     </div>
   </div>

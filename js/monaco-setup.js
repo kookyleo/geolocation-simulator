@@ -4,7 +4,7 @@ window.monacoReady = false;
 // 创建编辑器
 function createEditor(container, options) {
   if (!window.monaco) {
-    console.warn('Monaco Editor 尚未加载完成');
+    console.warn('Monaco Editor not loaded');
     return null;
   }
   return window.monaco.editor.create(container, {

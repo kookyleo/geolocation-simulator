@@ -140,7 +140,7 @@ class UIController {
   openAddLocationModal() {
     // 获取当前位置作为默认名称
     const position = this.mapController.marker.getLatLng();
-    const defaultName = `位置 (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`;
+    const defaultName = `Location (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`;
 
     // 设置默认名称
     this.locationNameInput.value = defaultName;
@@ -160,7 +160,7 @@ class UIController {
   openEditLocationModal(index) {
     // 编辑功能已集成到JSON编辑器中
     // 这个方法保留仅为了兼容性
-    console.log('请使用卡片中的编辑按钮进行编辑');
+    console.log('Please use the edit button in the card to edit');
   }
 
   /**
@@ -169,7 +169,7 @@ class UIController {
    */
   saveEditedLocation() {
     // 编辑功能已集成到JSON编辑器中
-    console.log('请使用卡片中的编辑按钮进行编辑');
+    console.log('Please use the edit button in the card to edit');
   }
 
   /**
@@ -210,8 +210,8 @@ class UIController {
       // 显示空状态
       container.innerHTML = `
         <div class="empty-state">
-          <p>您还没有保存任何位置</p>
-          <button id="addFirstLocation" class="save">添加第一个位置</button>
+          <p>You haven't saved any locations yet</p>
+          <button id="addFirstLocation" class="save">Add First Location</button>
         </div>
       `;
 
@@ -236,9 +236,9 @@ class UIController {
         buttons.className = 'grid-card-buttons';
         buttons.innerHTML = `
           <div class="action-group">
-            <button class="use-btn" title="使用位置"><i class="fas fa-map-marker-alt"></i></button>
-            <button class="edit-btn" title="编辑位置"><i class="fas fa-edit"></i></button>
-            <button class="delete-btn" title="删除位置"><i class="fas fa-trash-alt"></i></button>
+            <button class="use-btn" title="Use Location"><i class="fas fa-map-marker-alt"></i></button>
+            <button class="edit-btn" title="Edit Location"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn" title="Delete Location"><i class="fas fa-trash-alt"></i></button>
           </div>
         `;
         
@@ -279,7 +279,7 @@ class UIController {
         
         // 删除按钮事件
         deleteBtn.addEventListener('click', () => {
-          if (confirm('确定要删除这个位置吗？')) {
+          if (confirm('Are you sure you want to delete this location?')) {
             if (this.locationManager.deleteLocation(index)) {
               this.renderLocations();
             }
@@ -311,35 +311,24 @@ class UIController {
                   editBtn.classList.remove('editing');
                   cardContent?.classList.remove('editing');
                   editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                  editBtn.title = '编辑位置';
+                  editBtn.title = 'Edit Location';
                   json5Editor.editor?.updateOptions?.({ readOnly: true });
                 }
               } catch (error) {
-                console.error('解析JSON失败:', error);
-                alert('位置数据格式无效，请检查后重试');
+                console.error('Location data format invalid, please check and try again');
+                alert('Location data format invalid, please check and try again');
               }
             } else {
               // 进入编辑模式
               editBtn.classList.add('editing');
               cardContent?.classList.add('editing');
               editBtn.innerHTML = '<i class="fas fa-save"></i>';
-              editBtn.title = '保存位置';
+              editBtn.title = 'Save Location';
               json5Editor.editor?.updateOptions?.({ readOnly: false });
             }
           });
-          
-          // 使用位置（双击编辑器区域） - 禁用此功能，因为现在我们在卡片上有双击编辑功能
-          // editorContainer.addEventListener('dblclick', () => {
-          //   if (!editBtn.classList.contains('editing')) {
-          //     const location = this.locationManager.useLocation(index);
-          //     if (location) {
-          //       this.mapController.setMapLocation(location.latitude, location.longitude);
-          //       this.closeLocationManager();
-          //     }
-          //   }
-          // });
         }).catch(error => {
-          console.error('Monaco 编辑器加载失败:', error);
+          console.error('Monaco Editor load failed:', error);
           
           // 如果 Monaco 加载失败，使用普通文本区域作为后备
           const textarea = document.createElement('textarea');
@@ -366,19 +355,19 @@ class UIController {
                   editBtn.classList.remove('editing');
                   cardContent?.classList.remove('editing');
                   editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                  editBtn.title = '编辑位置';
+                  editBtn.title = 'Edit Location';
                   textarea.readOnly = true;
                 }
               } catch (error) {
-                console.error('解析JSON失败:', error);
-                alert('位置数据格式无效，请检查后重试');
+                console.error('Location data format invalid, please check and try again');
+                alert('Location data format invalid, please check and try again');
               }
             } else {
               // 进入编辑模式
               editBtn.classList.add('editing');
               cardContent?.classList.add('editing');
               editBtn.innerHTML = '<i class="fas fa-save"></i>';
-              editBtn.title = '保存位置';
+              editBtn.title = 'Save Location';
               textarea.readOnly = false;
             }
           });
@@ -396,7 +385,7 @@ class UIController {
         });
       });
     }).catch(error => {
-      console.error('JSON5 支持模块加载失败:', error);
+      console.error('Failed to load JSON5 support module:', error);
       this.renderFallbackLocations();
     });
   }
@@ -417,15 +406,15 @@ class UIController {
           <div class="grid-card-header">
             <h3>${location.name}</h3>
             <div class="card-header-actions">
-              <button class="grid-btn use-location" data-index="${index}" title="使用位置"><i class="fas fa-map-marker-alt"></i></button>
-              <button class="grid-btn edit-location" data-index="${index}" title="编辑位置"><i class="fas fa-edit"></i></button>
-              <button class="grid-card-delete" data-index="${index}" title="删除位置"><i class="fas fa-trash"></i></button>
+              <button class="grid-btn use-location" data-index="${index}" title="Use Location"><i class="fas fa-map-marker-alt"></i></button>
+              <button class="grid-btn edit-location" data-index="${index}" title="Edit Location"><i class="fas fa-edit"></i></button>
+              <button class="grid-card-delete" data-index="${index}" title="Delete Location"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           <div class="grid-card-content">
-            <div class="grid-field"><span>纬度:</span> ${location.latitude}</div>
-            <div class="grid-field"><span>经度:</span> ${location.longitude}</div>
-            <div class="grid-field"><span>保存时间:</span> ${formattedDate}</div>
+            <div class="grid-field"><span>Latitude:</span> ${location.latitude}</div>
+            <div class="grid-field"><span>Longitude:</span> ${location.longitude}</div>
+            <div class="grid-field"><span>Timestamp:</span> ${formattedDate}</div>
           </div>
         </div>
       `;
@@ -476,7 +465,7 @@ class UIController {
       button.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
         // 显示提示消息，建议用户使用新的JSON编辑器模式
-        alert('请刷新页面使用新的JSON编辑器进行编辑');
+        alert('Please refresh the page and use the new JSON editor to edit');
         // 重新渲染位置列表，使用JSON编辑器模式
         this.renderLocations();
       });
@@ -487,7 +476,7 @@ class UIController {
     deleteButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
-        if (confirm('确定要删除这个位置吗？')) {
+        if (confirm('Are you sure you want to delete this location?')) {
           if (this.locationManager.deleteLocation(index)) {
             this.renderLocations();
           }
@@ -503,7 +492,7 @@ class UIController {
     const locations = this.locationManager.getSavedLocations();
 
     if (locations.length === 0) {
-      alert('没有可导出的位置');
+      alert('No locations to export');
       return;
     }
 
@@ -535,7 +524,7 @@ class UIController {
 
     // 检查文件类型
     if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-      alert('请选择JSON文件');
+      alert('Please select a JSON file');
       event.target.value = '';
       return;
     }
@@ -553,7 +542,7 @@ class UIController {
     };
 
     reader.onerror = () => {
-      alert('读取文件时出错');
+      alert('Failed to read file');
       event.target.value = '';
     };
 

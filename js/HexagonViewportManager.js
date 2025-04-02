@@ -35,7 +35,7 @@ class HexagonViewportManager {
   updateVisibleHexagons() {
     if (!this.gridLayer.visible || !this.gridLayer.allHexagons.length) return;
     
-    console.time('更新可视六边形');
+    console.time('Updating visible hexagons');
     
     // 获取当前地图视口范围
     const bounds = this.gridLayer.map.getBounds();
@@ -69,11 +69,11 @@ class HexagonViewportManager {
     // 更新可见六边形集合
     this.visibleHexagons = newVisibleHexagons;
     
-    // 更新当前可见的六边形数组
+    // Update current visible hexagons array
     this.gridLayer.hexagons = this.gridLayer.allHexagons.filter(hex => this.visibleHexagons.has(hex.id));
     
-    console.timeEnd('更新可视六边形');
-    console.log(`可视六边形: ${this.visibleHexagons.size}/${this.gridLayer.allHexagons.length}`);
+    console.timeEnd('Updating visible hexagons');
+    console.log(`Visible hexagons: ${this.visibleHexagons.size}/${this.gridLayer.allHexagons.length}`);
   }
 
   /**

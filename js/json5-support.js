@@ -6,15 +6,15 @@
 const JSON5_LANGUAGE_ID = 'json5';
 
 /**
- * 初始化 JSON5 语言支持
+ * Initialize JSON5 language support
  */
 function initializeJSON5Language() {
   if (!window.monaco) {
-    console.warn('Monaco Editor 尚未加载完成');
+    console.warn('Monaco Editor has not been loaded yet');
     return;
   }
   
-  // 如果已经注册过，则不再重复注册
+  // If already registered, do not register again
   if (window.monaco.languages.getLanguages().some(lang => lang.id === JSON5_LANGUAGE_ID)) {
     return;
   }
@@ -107,7 +107,7 @@ function initializeJSON5Language() {
           text: formatted,
         }];
       } catch (error) {
-        console.error('格式化JSON失败:', error);
+        console.error('Failed to format JSON:', error);
         return [];
       }
     }
@@ -139,11 +139,11 @@ function initializeJSON5Language() {
  */
 function createJSON5Editor(container, options = {}) {
   if (!window.monaco) {
-    console.warn('Monaco Editor 尚未加载完成');
+    console.warn('Monaco Editor has not been loaded yet');
     return null;
   }
   
-  // 确保 JSON5 语言支持已初始化
+  // Ensure JSON5 language support is initialized
   initializeJSON5Language();
   
   // 默认选项
@@ -210,7 +210,7 @@ function createJSON5Editor(container, options = {}) {
         const formatted = JSON.stringify(parsed, null, 2);
         editor.setValue(formatted);
       } catch (error) {
-        console.error('格式化JSON失败:', error);
+        console.error('Failed to format JSON:', error);
       }
     },
     
