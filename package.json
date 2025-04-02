@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "monaco-editor": "^0.40.0"
+    "braces": "^3.0.3",
+    "chokidar": "^4.0.3",
+    "micromatch": "^4.0.8",
+    "monaco-editor": "^0.40.0",
+    "readdirp": "^4.1.2"
   },
   "name": "geolocation",
   "version": "1.0.0",
@@ -8,11 +12,11 @@
   "scripts": {
     "clean": "rm -rf dist",
     "make-dist": "mkdir dist",
-    "copy:single": "cpx \"{manifest.json,panel.html,background.js,styles.css}\" dist",
-    "copy:js": "cpx \"js/**/*\" dist/js",
-    "copy:lib": "cpx \"lib/**/*\" dist/lib",
-    "copy:images": "cpx \"images/**/*\" dist/images",
-    "copy:monaco": "cpx \"node_modules/monaco-editor/min/vs/**/*\" dist/node_modules/monaco-editor/min/vs",
+    "copy:single": "cpy \"{manifest.json,panel.html,background.js,styles.css}\" dist",
+    "copy:js": "cpy \"js/**/*\" dist/js",
+    "copy:lib": "cpy \"lib/**/*\" dist/lib",
+    "copy:images": "cpy \"images/**/*\" dist/images",
+    "copy:monaco": "cpy \"node_modules/monaco-editor/min/vs/**/*\" dist/node_modules/monaco-editor/min/vs",
     "copy": "npm run clean && npm run make-dist && npm run copy:single && npm run copy:js && npm run copy:lib && npm run copy:images && npm run copy:monaco",
     "zip": "cd dist && zip -r ../geolocation.zip .",
     "package": "npm run copy && npm run zip"
@@ -25,6 +29,6 @@
   },
   "description": "",
   "devDependencies": {
-    "cpx": "^1.5.0"
+    "cpy": "^11.1.0"
   }
 }

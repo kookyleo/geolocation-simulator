@@ -23,4 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 初始化UI控制器
   const uiController = new UIController(mapController, locationManager);
+  
+  // 注册网格管理器事件
+  document.addEventListener('openGridManager', () => {
+    gridManager.openGridManager();
+  });
 });
