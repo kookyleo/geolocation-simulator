@@ -4,23 +4,16 @@
   "version": "1.0",
   "description": "Used to simulate geolocation in the browser.",
   "author": "kookyleo",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kookyleo/geolocation-simulator.git"
-  },
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
+    "16": "images/icon24.png",
+    "48": "images/icon64.png",
     "128": "images/icon128.png"
   },
   "permissions": [
     "sidePanel", 
     "geolocation",
     "debugger",
-    "activeTab",
-    "storage",
-    "tabs"
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"

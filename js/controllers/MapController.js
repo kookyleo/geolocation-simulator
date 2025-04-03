@@ -298,7 +298,7 @@ class MapController {
       }
       
       try {
-        // 获取当前位置
+        // 获取当前位置，添加更多配置选项
         navigator.geolocation.getCurrentPosition(
           // 成功回调
           (position) => {
@@ -382,11 +382,11 @@ class MapController {
               this.showLocationPermissionHelp();
             }
           },
-          // 选项
+          // 地理位置选项
           {
-            enableHighAccuracy: true,  // 尝试获取高精度位置
-            timeout: 20000,            // 20 秒超时，增加超时时间以提高成功率
-            maximumAge: 60000          // 允许60秒内的缓存位置，减少定位失败的可能性
+            enableHighAccuracy: true,  // 获取最高精度的位置信息
+            timeout: 30000,           // 30秒超时，增加超时时间以提高成功率
+            maximumAge: 0             // 不使用缓存的位置信息
           }
         );
       } catch (e) {

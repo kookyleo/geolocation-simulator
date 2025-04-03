@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Tracker</title>
+</head>
+<body>
+    <button onclick="startTracking()">Start Tracking</button>
+    <script>
+        (function() {
+            let lastPos = null;
+            let lastError = null;
+            window.startTracking = function() {
+                if (!navigator.geolocation) {
+                    console.error('Error: Geolocation not supported by this browser');
+                    return;
+                }
+                console.log('Starting location tracking...');
+                navigator.geolocation.watchPosition(
+                    function(pos) {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        if (!lastPos || lastPos.lat !== lat || lastPos.lon !== lon) {
+                            console.log('Position:', {
+                                lat: lat,
+                                lon: lon,
+                                accuracy: pos.coords.accuracy,
+                                time: new Date().toISOString()
+                            });
+                            lastPos = {lat: lat, lon: lon};
+                        }
+                    },
+                    function(err) {
+                        // Only log new errors to avoid spam
+                        if (!lastError || lastError.code !== err.code || lastError.message !== err.message) {
+                            console.error('Error:', {
+                                code: err.code,
+                                message: err.message,
+                                time: new Date().toISOString()
+                            });
+                            lastError = {code: err.code, message: err.message};
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true, // Reverted to true since it worked once
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            };
+        })();
+    </script>
+</body>
+</html>
