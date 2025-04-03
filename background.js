@@ -76,16 +76,36 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     // 连接到特定标签页的调试器
     const tabId = message.tabId || sender.tab?.id;
     if (tabId) {
-      attachDebugger(tabId)
-        .then(result => {
-          console.log(`Successfully connected debugger to tab ${tabId}`);
-          sendResponse({ success: true, result });
-        })
-        .catch(error => {
-          console.error(`Failed to connect debugger to tab ${tabId}:`, error);
-          sendResponse({ success: false, error: error.message });
+      // 检查是否是 chrome:// 或 chrome-extension:// 页面
+      try {
+        chrome.tabs.get(tabId, (tab) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error getting tab:', chrome.runtime.lastError);
+            sendResponse({ success: false, error: chrome.runtime.lastError.message });
+            return;
+          }
+          
+          if (tab && tab.url && (tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://'))) {
+            console.log(`Ignoring special page: ${tab.url}`);
+            // sendResponse({ success: false, error: 'Unsupported chrome:// or chrome-extension:// page' });
+            return;
+          }
+          
+          attachDebugger(tabId)
+            .then(result => {
+              console.log(`Successfully connected debugger to tab ${tabId}`);
+              sendResponse({ success: true, result });
+            })
+            .catch(error => {
+              console.error(`Failed to connect debugger to tab ${tabId}:`, error);
+              sendResponse({ success: false, error: error.message });
+            });
         });
-      return true;
+      } catch (error) {
+        console.error('Exception when connecting to tab:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+      return true; // 保持消息通道开放，以便异步发送响应
     }
     sendResponse({ success: false, error: 'No tab ID provided' });
     return true;
