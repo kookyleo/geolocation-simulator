@@ -13,10 +13,8 @@
     "sidePanel", 
     "geolocation",
     "debugger",
+    "activeTab",
     "storage"
-  ],
-  "host_permissions": [
-    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
@@ -26,11 +24,5 @@
   },
   "action": {
     "default_title": "Open Geolocation Simulator"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["lib/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }
